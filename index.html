@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE ATELIER | Homepage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;1,400&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
+<style>
+
+/* ── RESET & TOKENS ── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; cursor:none !important; }
+:root {
+  --bg:     #070707;
+  --fg:     #eeebe4;
+  --muted:  rgba(238,235,228,.38);
+  --accent: #6b8fad;
+  --arc:    rgba(107,143,173,.95);
+  --border: rgba(238,235,228,.07);
+  --ease:   cubic-bezier(.4,0,.2,1);
+}
+html, body { background:var(--bg); color:var(--fg); font-family:'EB Garamond',Georgia,serif; height:100vh; overflow:hidden; }
+
+/* ── CURSOR ── */
+#dot {
+  width:4px; height:4px; background:var(--fg); border-radius:50%;
+  position:fixed; top:0; left:0; pointer-events:none; z-index:9999;
+  transform:translate(-50%,-50%); will-change:left,top;
+}
+#lupa {
+  width:34px; height:34px; border-radius:50%;
+  position:fixed; top:0; left:0; pointer-events:none; z-index:9997;
+  transform:translate(-50%,-50%);
+  border:1px solid rgba(238,235,228,.2); background:rgba(7,7,7,.7);
+  backdrop-filter:blur(2px);
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden; opacity:0;
+  transition:opacity .2s, border-color .2s, width .15s, height .15s;
+  will-change:left,top;
+}
+#lupa::after {
+  content:''; position:absolute; inset:0; border-radius:50%;
+  background:radial-gradient(circle at 35% 28%, rgba(255,255,255,.08) 0%, transparent 58%);
+  pointer-events:none;
+}
+#lc {
+  font-family:'EB Garamond',Georgia,serif;
+  font-size:1.35rem; line-height:1; color:var(--fg);
+  opacity:0; transition:opacity .12s; pointer-events:none; user-select:none;
+}
+#lupa.show         { opacity:1; border-color:rgba(238,235,228,.38); }
+#lupa.show.lit     { width:40px; height:40px; border-color:rgba(238,235,228,.45); }
+#lupa.show.lit #lc { opacity:1; }
+
+/* ── MOBIL: žádný kurzor ── */
+@media (hover:none) and (pointer:coarse) {
+  *, *::before, *::after { cursor:auto !important; }
+  #dot, #lupa { display:none !important; }
+}
+
+@media (max-width:480px) {
+  html, body { overflow-x:hidden !important; }
+  * { word-wrap:break-word; overflow-wrap:anywhere; }
+  .the-lbl { font-size:.52rem; letter-spacing:1.4em; padding-left:1.4em; margin-bottom:12px; }
+  .the-logo { font-size:clamp(2.2rem, 11vw, 3.2rem); letter-spacing:.06em; margin-bottom:24px; }
+  .mnav { gap:8px; }
+  .ml { font-size:.56rem; letter-spacing:.16em; text-indent:.16em; padding:6px 10px; white-space:nowrap; }
+  .page { padding:40px 16px 64px; }
+  .back { margin-top:20px; font-size:.58rem; padding:8px 14px; }
+  .prose { font-size:1rem; line-height:1.8; }
+  .prose .big { font-size:1.05rem; margin-bottom:24px; }
+  .vg { gap:6px; }
+  .vi { width:60px; height:60px; font-size:1.1rem; }
+  .vl { font-size:.48rem; }
+  .stitle { font-size:.9rem; margin-bottom:24px; }
+  .ba { width:min(320px,85vw); height:200px; }
+  .bb .br { width:48px; height:48px; font-size:.52rem; }
+  .bl { font-size:.44rem; }
+  .pg { max-width:100%; }
+  .pi { padding:12px 8px; }
+  .py { font-size:.44rem; }
+  .pn { font-size:.65rem; }
+  .pt { font-size:.54rem; }
+  .pnav { gap:20px; }
+  .pnel { font-size:.72rem; min-width:120px; }
+  .sb { width:min(320px,85vw); height:180px; }
+  .si { font-size:.72rem; padding:16px; }
+  .slb { font-size:.44rem; }
+  .ct { padding-top:16px; }
+  .cl { font-size:.44rem; margin-bottom:6px; }
+  .em { font-size:.62rem; }
+  #hbar-title { font-size:.58rem; }
+  #hbar-close { font-size:.52rem; }
+  #hbar-panel { padding:12px 14px 14px; }
+  .hcard { min-width:80px; padding:7px 9px; }
+}
+
+/* ── INTRO ──
+   body.p0    = vše skryté
+   body.p-the = pouze THE viditelné
+   body.p1    = A+I glow, THE zůstává
+   body.p2    = vše viditelné, glow mizí
+   bez třídy  = normální stav po animaci
+*/
+
+body.p0 .ir,
+body.p-the .ir {
+  opacity: 0;
+  transition: none;
+}
+body.p-the .ir.the-only {
+  opacity: 1;
+  transition: opacity .35s var(--ease);
+}
+body.p1 .ir.the-only {
+  opacity: 1;
+  transition: none;
+}
+body.p1 .ir.ai {
+  opacity: 1;
+  color: #fff;
+  text-shadow:
+    0 0 4px #fff,
+    0 0 12px var(--arc),
+    0 0 30px rgba(107,143,173,.9),
+    0 0 60px rgba(107,143,173,.5);
+  transition: opacity .2s var(--ease);
+}
+body.p1 .ir:not(.ai):not(.the-only) {
+  opacity: 0;
+}
+/* p2: transition-delay je nastaven inline přes JS pro každé .ir */
+body.p2 .ir {
+  opacity: 1;
+  color: inherit;
+  text-shadow: none;
+  transition: opacity .55s var(--ease), color .7s ease, text-shadow .7s ease;
+}
+
+/* Arc flash canvas */
+#arc-cvs {
+  position:fixed; inset:0; z-index:7900;
+  pointer-events:none;
+  display:none;
+}
+
+/* ── PAGES ── */
+.page {
+  position:fixed; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:56px 24px 88px;
+  opacity:0; pointer-events:none;
+  transition:opacity .69s var(--ease);
+}
+.page.on { opacity:1; pointer-events:all; }
+
+/* ── HOME ── */
+.wrap { text-align:center; }
+.the-lbl {
+  font-family:'Cormorant Garamond',serif;
+  font-size:.63rem; letter-spacing:2.2em; padding-left:2.2em;
+  color:var(--muted); display:block; margin-bottom:20px;
+  transition:color .5s, letter-spacing .88s, padding-left .88s;
+}
+.the-lbl:hover { color:var(--fg); letter-spacing:2.5em; padding-left:2.5em; }
+.the-logo {
+  font-size:clamp(3.6rem,10vw,6.5rem); font-weight:400;
+  letter-spacing:.17em; display:block; margin-bottom:52px; line-height:1;
+}
+a.ml { color:rgba(238,235,228,.55); text-decoration:none; }
+.the-logo .ltr { display:inline-block; transition:transform .23s ease; }
+.the-logo .ltr:hover { transform:scale(1.2); }
+
+/* ── ARC LETTER: elektrický zkrat v A ── */
+.arc-letter {
+  position: relative;
+}
+/* ════════════════════════════════════════════════════════════════
+   ELEKTROMAGNETICKÉ POLE — průlet energie uvnitř písmen
+   Cyklus: 41s | potemnění TEL+ER každých ~9s | 18 odstínů | Vysoký kontrast
+   45-55% → stabilní fáze, nápis v původní podobě
+   PEAK: AI plný jas, TEL+ER ztmaví každých ~9s
+╚═══════════════════════════════════════════════════════════════ */
+.arc-tel.arc-live { --dur:41s; animation:emStorm var(--dur) ease-in-out infinite; animation-delay:var(--d,0s); }
+.arc-er.arc-live  { --dur:41s; animation:emResonance var(--dur) ease-in-out infinite; animation-delay:var(--d,0s); }
+.arc-ai.arc-live  { --dur:41s; animation:emArc var(--dur) ease-in-out infinite; animation-delay:var(--d,0s); }
+
+@keyframes emStorm {
+  0%,100%{ color:var(--fg); text-shadow:none; opacity:.42; }
+  2%{ color:#2a8a9e; text-shadow:inset 0 0 2px rgba(0,160,140,.25),0 0 1px rgba(0,180,155,.15); opacity:.39; }
+  4%{ color:#ffffff; text-shadow:-2px 0 4px rgba(0,210,180,.65),-1px 0 10px rgba(0,190,160,.48),0 0 22px rgba(0,170,140,.34),0 0 44px rgba(0,150,120,.2); opacity:.42; }
+  7%{ color:#6a5a8a; text-shadow:0 0 2px rgba(140,100,200,.3),0 0 5px rgba(160,120,220,.18); opacity:.37; }
+  10%{ color:#9af0e8; text-shadow:1px 0 4px rgba(0,200,170,.5),2px 0 10px rgba(0,180,150,.36),0 0 20px rgba(0,160,130,.24); opacity:.42; }
+  13%{ color:#ffffff; text-shadow:0 0 5px rgba(180,140,255,.68),0 0 14px rgba(160,120,240,.5),0 0 30px rgba(140,100,220,.36),0 0 56px rgba(120,80,200,.22); opacity:.42; }
+  16%{ color:#5078a8; text-shadow:0 0 3px rgba(100,170,230,.32),0 0 7px rgba(80,150,210,.2); opacity:.38; }
+  19%{ color:#ffffff; text-shadow:0 0 6px rgba(140,200,255,.72),0 0 16px rgba(120,180,240,.55),0 0 36px rgba(100,160,220,.4),0 0 68px rgba(80,140,200,.26); opacity:.42; }
+  20%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  21%{ color:var(--fg); text-shadow:none; opacity:.05; }
+  22%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  25%{ color:#ffffff; text-shadow:0 0 7px rgba(0,220,190,.78),0 0 20px rgba(0,200,170,.58),0 0 44px rgba(0,180,150,.42),0 0 82px rgba(0,160,130,.28),0 0 140px rgba(0,140,110,.15); opacity:.42; }
+  28%{ color:#6078a8; text-shadow:0 0 3px rgba(90,155,220,.35),0 0 8px rgba(70,135,200,.22); opacity:.39; }
+  32%{ color:#ffffff; text-shadow:0 0 5px rgba(160,120,240,.65),0 0 14px rgba(140,100,220,.48),0 0 34px rgba(120,80,200,.34),0 0 64px rgba(100,60,180,.2); opacity:.42; }
+  36%{ color:#4aaaa0; text-shadow:0 0 4px rgba(0,190,165,.38),0 0 9px rgba(0,170,145,.24); opacity:.39; }
+  40%{ color:#d0e8ff; text-shadow:0 0 3px rgba(120,190,255,.4),0 0 8px rgba(100,170,235,.26); opacity:.42; }
+  42%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  43%{ color:var(--fg); text-shadow:none; opacity:.05; }
+  44%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  45%,55%{ color:var(--fg); text-shadow:none; opacity:.42; }
+  58%{ color:#8ae8e0; text-shadow:0 0 4px rgba(0,200,170,.32); opacity:.42; }
+  62%{ color:#ffffff; text-shadow:0 0 5px rgba(140,200,255,.5),0 0 12px rgba(120,180,240,.36),0 0 26px rgba(100,160,220,.22); opacity:.42; }
+  64%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  65%{ color:var(--fg); text-shadow:none; opacity:.05; }
+  66%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  68%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  72%{ color:var(--fg); text-shadow:none; opacity:.05; }
+  76%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  80%{ color:#aa9aca; text-shadow:0 0 4px rgba(160,120,240,.35),0 0 10px rgba(140,100,220,.22); opacity:.39; }
+  84%{ color:#ffffff; text-shadow:0 0 6px rgba(0,210,180,.6),0 0 16px rgba(0,190,160,.44),0 0 36px rgba(0,170,140,.3),0 0 68px rgba(0,150,120,.18); opacity:.42; }
+  86%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  87%{ color:var(--fg); text-shadow:none; opacity:.05; }
+  88%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  92%{ color:#ffffff; text-shadow:0 0 5px rgba(180,140,255,.55),0 0 12px rgba(160,120,240,.4),0 0 28px rgba(140,100,220,.26); opacity:.42; }
+  96%{ color:#b8e8e0; text-shadow:0 0 3px rgba(0,190,165,.3),0 0 7px rgba(0,170,145,.2); opacity:.42; }
+}
+
+@keyframes emResonance {
+  0%,100%{ color:var(--fg); text-shadow:none; opacity:.42; }
+  4%{ color:#2a8a9e; text-shadow:0 0 3px rgba(0,160,140,.28),0 0 6px rgba(0,180,155,.16); opacity:.37; }
+  8%{ color:#ffffff; text-shadow:0 0 5px rgba(0,210,180,.6),0 0 14px rgba(0,190,160,.44),0 0 32px rgba(0,170,140,.3),0 0 60px rgba(0,150,120,.18); opacity:.42; }
+  12%{ color:#6a5a8a; text-shadow:0 0 3px rgba(140,100,200,.32),0 0 7px rgba(160,120,220,.2); opacity:.38; }
+  16%{ color:#e0f8f4; text-shadow:0 0 6px rgba(0,200,170,.52),0 0 16px rgba(0,180,150,.38),0 0 38px rgba(0,160,130,.26),0 0 72px rgba(0,140,110,.15); opacity:.42; }
+  20%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  21%{ color:var(--fg); text-shadow:none; opacity:.05; }
+  22%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  24%{ color:#4aaaa0; text-shadow:0 0 4px rgba(0,190,165,.35),0 0 10px rgba(0,170,145,.22); opacity:.39; }
+  28%{ color:#ffffff; text-shadow:0 0 7px rgba(140,200,255,.74),0 0 20px rgba(120,180,240,.56),0 0 46px rgba(100,160,220,.4),0 0 88px rgba(80,140,200,.26),0 0 150px rgba(60,120,180,.14); opacity:.42; }
+  32%{ color:#5078a8; text-shadow:0 0 4px rgba(100,170,230,.3),0 0 8px rgba(80,150,210,.2); opacity:.37; }
+  36%{ color:#ffffff; text-shadow:0 0 6px rgba(0,220,190,.62),0 0 18px rgba(0,200,170,.45),0 0 42px rgba(0,180,150,.32),0 0 80px rgba(0,160,130,.2); opacity:.42; }
+  40%{ color:#c8b8e8; text-shadow:0 0 4px rgba(170,130,250,.38),0 0 10px rgba(150,110,230,.24); opacity:.42; }
+  42%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  43%{ color:var(--fg); text-shadow:none; opacity:.05; }
+  44%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  45%,55%{ color:var(--fg); text-shadow:none; opacity:.42; }
+  60%{ color:#8ae8e0; text-shadow:0 0 4px rgba(0,200,170,.32),0 0 9px rgba(0,180,150,.2); opacity:.42; }
+  64%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  65%{ color:var(--fg); text-shadow:none; opacity:.05; }
+  66%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  68%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  72%{ color:var(--fg); text-shadow:none; opacity:.05; }
+  76%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  82%{ color:#9ad8d0; text-shadow:0 0 5px rgba(0,190,165,.38),0 0 12px rgba(0,170,145,.25); opacity:.40; }
+  86%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  87%{ color:var(--fg); text-shadow:none; opacity:.05; }
+  88%{ color:var(--fg); text-shadow:none; opacity:.08; }
+  94%{ color:#d0c8e8; text-shadow:0 0 4px rgba(170,130,250,.32),0 0 9px rgba(150,110,230,.2); opacity:.42; }
+}
+
+@keyframes emArc {
+  0%,100%{ color:var(--fg); text-shadow:none; opacity:.42; }
+  3%{ color:#4aaaa0; text-shadow:0 0 3px rgba(0,190,165,.3),0 0 6px rgba(0,170,145,.18); opacity:.37; }
+  6%{ color:#ffffff; text-shadow:0 0 6px rgba(180,140,255,.58),0 0 15px rgba(160,120,240,.42),0 0 34px rgba(140,100,220,.28),0 0 64px rgba(120,80,200,.16); opacity:.42; }
+  9%{ color:#5078a8; text-shadow:0 0 3px rgba(100,170,230,.32),0 0 7px rgba(80,150,210,.2); opacity:.38; }
+  12%{ color:#ffffff; text-shadow:0 0 7px rgba(0,220,190,.66),0 0 18px rgba(0,200,170,.48),0 0 42px rgba(0,180,150,.34),0 0 80px rgba(0,160,130,.2); opacity:.42; }
+  15%{ color:#6a5a8a; text-shadow:0 0 4px rgba(140,100,200,.35),0 0 9px rgba(160,120,220,.22); opacity:.39; }
+  18%{ color:#ffffff; text-shadow:0 0 8px rgba(140,200,255,.72),0 0 22px rgba(120,180,240,.54),0 0 50px rgba(100,160,220,.38),0 0 95px rgba(80,140,200,.24),0 0 160px rgba(60,120,180,.12); opacity:.42; }
+  20%{ color:#ffffff; text-shadow:0 0 8px rgba(180,140,255,.72),0 0 20px rgba(160,120,240,.54),0 0 48px rgba(140,100,220,.38),0 0 90px rgba(120,80,200,.24); opacity:.42; }
+  21%{ color:#ffffff; text-shadow:0 0 10px rgba(0,230,195,.82),0 0 28px rgba(0,210,175,.62),0 0 65px rgba(0,190,155,.46),0 0 125px rgba(0,170,135,.32); opacity:.42; }
+  22%{ color:#ffffff; text-shadow:0 0 8px rgba(140,200,255,.72),0 0 20px rgba(120,180,240,.54),0 0 48px rgba(100,160,220,.38),0 0 90px rgba(80,140,200,.24); opacity:.42; }
+  24%{ color:#ffffff; text-shadow:0 0 9px rgba(180,140,255,.78),0 0 25px rgba(160,120,240,.58),0 0 58px rgba(140,100,220,.42),0 0 110px rgba(120,80,200,.28),0 0 185px rgba(100,60,180,.15); opacity:.42; }
+  27%{ color:#a0d8ff; text-shadow:0 0 5px rgba(120,190,255,.4),0 0 12px rgba(100,170,235,.28); opacity:.41; }
+  30%{ color:#ffffff; text-shadow:0 0 10px rgba(0,230,195,.82),0 0 28px rgba(0,210,175,.62),0 0 65px rgba(0,190,155,.46),0 0 125px rgba(0,170,135,.32),0 0 210px rgba(0,150,115,.18); opacity:.42; }
+  36%{ color:#cabaea; text-shadow:0 0 5px rgba(170,130,250,.42),0 0 12px rgba(150,110,230,.28); opacity:.42; }
+  40%{ color:#e0f8f4; text-shadow:0 0 3px rgba(0,200,170,.32),0 0 8px rgba(0,180,150,.22); opacity:.42; }
+  42%{ color:#ffffff; text-shadow:0 0 8px rgba(180,140,255,.72),0 0 20px rgba(160,120,240,.54),0 0 48px rgba(140,100,220,.38),0 0 90px rgba(120,80,200,.24); opacity:.42; }
+  43%{ color:#ffffff; text-shadow:0 0 10px rgba(0,230,195,.82),0 0 28px rgba(0,210,175,.62),0 0 65px rgba(0,190,155,.46),0 0 125px rgba(0,170,135,.32); opacity:.42; }
+  44%{ color:#ffffff; text-shadow:0 0 8px rgba(140,200,255,.72),0 0 20px rgba(120,180,240,.54),0 0 48px rgba(100,160,220,.38),0 0 90px rgba(80,140,200,.24); opacity:.42; }
+  45%,55%{ color:var(--fg); text-shadow:none; opacity:.42; }
+  58%{ color:#b8d8ff; text-shadow:0 0 5px rgba(140,200,255,.38),0 0 12px rgba(120,180,240,.26); opacity:.42; }
+  62%{ color:#ffffff; text-shadow:0 0 7px rgba(180,140,255,.6),0 0 18px rgba(160,120,240,.45),0 0 42px rgba(140,100,220,.32),0 0 82px rgba(120,80,200,.2); opacity:.42; }
+  64%{ color:#ffffff; text-shadow:0 0 8px rgba(140,200,255,.72),0 0 20px rgba(120,180,240,.54),0 0 48px rgba(100,160,220,.38),0 0 90px rgba(80,140,200,.24); opacity:.42; }
+  65%{ color:#ffffff; text-shadow:0 0 10px rgba(0,230,195,.82),0 0 28px rgba(0,210,175,.62),0 0 65px rgba(0,190,155,.46),0 0 125px rgba(0,170,135,.32); opacity:.42; }
+  66%{ color:#ffffff; text-shadow:0 0 8px rgba(180,140,255,.72),0 0 20px rgba(160,120,240,.54),0 0 48px rgba(140,100,220,.38),0 0 90px rgba(120,80,200,.24); opacity:.42; }
+  68%{ color:#ffffff; text-shadow:0 0 12px rgba(140,200,255,.78),0 0 32px rgba(120,180,240,.6),0 0 74px rgba(100,160,220,.44),0 0 140px rgba(80,140,200,.3),0 0 240px rgba(60,120,180,.18); opacity:.42; }
+  72%{ color:#ffffff; text-shadow:0 0 16px rgba(0,230,195,.88),0 0 42px rgba(0,210,175,.68),0 0 95px rgba(0,190,155,.52),0 0 175px rgba(0,170,135,.36),0 0 290px rgba(0,150,115,.22); opacity:.42; }
+  76%{ color:#ffffff; text-shadow:0 0 12px rgba(180,140,255,.8),0 0 34px rgba(160,120,240,.62),0 0 78px rgba(140,100,220,.46),0 0 148px rgba(120,80,200,.32),0 0 255px rgba(100,60,180,.2); opacity:.42; }
+  82%{ color:#a0f8f0; text-shadow:0 0 6px rgba(0,210,180,.48),0 0 15px rgba(0,190,160,.34),0 0 35px rgba(0,170,140,.22); opacity:.41; }
+  86%{ color:#ffffff; text-shadow:0 0 8px rgba(160,120,240,.72),0 0 20px rgba(140,100,220,.54),0 0 48px rgba(120,80,200,.38),0 0 90px rgba(100,60,180,.24); opacity:.42; }
+  87%{ color:#ffffff; text-shadow:0 0 10px rgba(0,230,195,.82),0 0 28px rgba(0,210,175,.62),0 0 65px rgba(0,190,155,.46),0 0 125px rgba(0,170,135,.32); opacity:.42; }
+  88%{ color:#ffffff; text-shadow:0 0 8px rgba(140,200,255,.72),0 0 20px rgba(120,180,240,.54),0 0 48px rgba(100,160,220,.38),0 0 90px rgba(80,140,200,.24); opacity:.42; }
+  94%{ color:#c8e4ff; text-shadow:0 0 5px rgba(140,200,255,.38),0 0 12px rgba(120,180,240,.26); opacity:.42; }
+}
+
+.mnav { display:flex; flex-direction:column; gap:12px; align-items:center; }
+.ml {
+  font-family:'Cormorant Garamond',serif;
+  font-size:.68rem; letter-spacing:.34em; text-indent:.34em;
+  text-transform:uppercase; color:var(--muted);
+  padding:10px 20px; position:relative; transition:color .48s;
+}
+.ml::after {
+  content:''; position:absolute; bottom:4px; left:50%;
+  transform:translateX(-50%) scaleX(0);
+  width:22px; height:1px; background:var(--accent); transition:transform .5s;
+}
+.ml:hover { color:var(--fg); }
+.ml:hover::after { transform:translateX(-50%) scaleX(1); }
+
+/* ── BACK ── */
+.back {
+  margin-top:36px; font-family:'Cormorant Garamond',serif;
+  font-size:.65rem; letter-spacing:.28em;
+  color:var(--muted); padding:10px 20px; display:inline-block;
+  transition:color .48s, letter-spacing .48s;
+}
+.back:hover { color:var(--accent); letter-spacing:.34em; }
+
+/* ── THE ── */
+.prose { font-size:1.15rem; line-height:2.1; max-width:520px; text-align:center; }
+.prose .big  { font-size:1.2rem; margin-bottom:38px; }
+.prose .soft { color:var(--muted); font-style:italic; font-size:1.05rem; margin-bottom:6px; }
+
+/* ── VISUAL ── */
+.vg { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; max-width:490px; margin:0 auto; }
+.vc { display:flex; flex-direction:column; align-items:center; gap:10px; }
+.vi {
+  width:80px; height:80px; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.3rem; color:var(--muted);
+  transition:border-color .4s, color .4s, transform .35s;
+}
+.vc:hover .vi { border-color:rgba(107,143,173,.45); color:var(--fg); transform:scale(1.05); }
+.vl { font-family:'Cormorant Garamond',serif; font-size:.56rem; letter-spacing:.15em; color:var(--muted); transition:color .35s; }
+.vc:hover .vl { color:var(--fg); }
+
+/* ── CONTENT ── */
+.stitle { font-size:1.1rem; margin-bottom:34px; color:rgba(238,235,228,.8); letter-spacing:.03em; }
+.ba { position:relative; width:min(490px,90vw); height:255px; margin:0 auto; }
+.bb { position:absolute; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; gap:7px; }
+.br {
+  width:58px; height:58px; border:1px solid rgba(238,235,228,.15); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Cormorant Garamond',serif; font-size:.62rem; color:var(--muted);
+  transition:border-color .4s, color .4s;
+}
+.bl { font-family:'Cormorant Garamond',serif; font-size:.52rem; letter-spacing:.12em; color:var(--muted); transition:color .35s; }
+.bb:hover .br { border-color:rgba(107,143,173,.5); color:var(--fg); }
+.bb:hover .bl { color:var(--fg); }
+
+/* ── ATELIER ── */
+.pg { display:grid; grid-template-columns:repeat(3,1fr); max-width:540px; margin:0 auto 28px; border:1px solid var(--border); }
+.pi { padding:17px 12px; border-right:1px solid var(--border); border-bottom:1px solid var(--border); transition:background .38s; }
+.pi:nth-child(3n)  { border-right:none; }
+.pi:nth-child(n+4) { border-bottom:none; }
+.pi:hover { background:rgba(107,143,173,.05); }
+.py { font-family:'Cormorant Garamond',serif; font-size:.52rem; letter-spacing:.13em; color:var(--accent); margin-bottom:4px; }
+.pn { font-size:.76rem; letter-spacing:.09em; margin-bottom:2px; }
+.pt { font-size:.63rem; font-style:italic; color:var(--muted); }
+.ct { padding-top:22px; border-top:1px solid var(--border); }
+.cl { font-family:'Cormorant Garamond',serif; font-size:.52rem; letter-spacing:.2em; color:var(--muted); margin-bottom:9px; }
+.em { font-family:'Cormorant Garamond',serif; font-size:.74rem; letter-spacing:.09em; color:var(--accent); text-decoration:none; transition:opacity .35s; }
+.em:hover { opacity:.65; }
+
+/* ── IDENTITY ── */
+.pnav { display:flex; align-items:center; justify-content:center; gap:38px; margin-bottom:20px; }
+.ar { width:38px; height:1px; background:rgba(238,235,228,.15); position:relative; transition:background .35s, width .35s; }
+.ar::before { content:''; position:absolute; width:20px; height:20px; border:1px solid rgba(238,235,228,.15); border-radius:50%; top:50%; transform:translateY(-50%); }
+.ar.lft::before { left:-10px; }
+.ar.rgt::before { right:-10px; }
+.al { position:absolute; top:50%; transform:translateY(-50%); width:0; height:0; border-style:solid; }
+.ar.lft .al { left:-3px;  border-width:4px 7px 4px 0; border-color:transparent rgba(238,235,228,.45) transparent transparent; }
+.ar.rgt .al { right:-3px; border-width:4px 0 4px 7px; border-color:transparent transparent transparent rgba(238,235,228,.45); }
+.ar:hover { background:var(--accent); width:46px; }
+.pnel { font-family:'Cormorant Garamond',serif; font-size:.85rem; letter-spacing:.2em; min-width:160px; text-align:center; transition:opacity .22s; }
+.sb { position:relative; width:min(460px,90vw); height:234px; margin:0 auto; border:1px solid var(--border); user-select:none; overflow:hidden; }
+.si { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:.88rem; line-height:1.7; padding:30px; text-align:center; white-space:pre-line; }
+.sbf { background:rgba(238,235,228,.025); clip-path:inset(0 50% 0 0); z-index:2; color:var(--muted); font-style:italic; }
+.saf { background:rgba(107,143,173,.04); z-index:1; }
+.sh  { position:absolute; top:0; bottom:0; left:50%; width:1px; background:var(--accent); z-index:3; }
+.sh::before {
+  content:'⟺'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:30px; height:30px; border:1px solid var(--accent); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.55rem; background:var(--bg); color:var(--accent);
+}
+.slb { display:flex; justify-content:space-between; width:min(460px,90vw); margin:8px auto 0; font-family:'Cormorant Garamond',serif; font-size:.52rem; letter-spacing:.15em; color:var(--muted); }
+.slb span:hover { color:var(--fg); }
+.dots { display:flex; gap:8px; margin-top:16px; justify-content:center; }
+.dd { width:4px; height:4px; border-radius:50%; background:rgba(238,235,228,.14); transition:background .3s, transform .3s; }
+.dd.on { background:var(--accent); transform:scale(1.4); }
+
+/* ── HISTORY BAR ── */
+#hbar {
+  position:fixed; bottom:0; left:0; right:0; z-index:7000;
+  transform:translateY(calc(100% - 3px));
+  transition:transform .45s var(--ease);
+}
+#hbar.open { transform:translateY(0); }
+#hbar-line {
+  height:3px;
+  background:linear-gradient(90deg, transparent, var(--border), var(--accent), var(--border), transparent);
+  opacity:.5; transition:opacity .3s;
+}
+#hbar:hover #hbar-line, #hbar.open #hbar-line { opacity:1; }
+#hbar-panel { background:rgba(7,7,7,.93); backdrop-filter:blur(12px); border-top:1px solid var(--border); padding:18px 24px 20px; }
+#hbar-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+#hbar-title { font-family:'Cormorant Garamond',serif; font-size:.52rem; letter-spacing:.25em; color:var(--muted); }
+#hbar-close { font-size:.6rem; letter-spacing:.15em; color:var(--muted); padding:4px 8px; transition:color .3s; }
+#hbar-close:hover { color:var(--fg); }
+#hbar-list { display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; padding-bottom:2px; }
+#hbar-list::-webkit-scrollbar { display:none; }
+.hcard { flex:0 0 auto; display:flex; flex-direction:column; gap:5px; padding:10px 14px; border:1px solid var(--border); min-width:110px; position:relative; transition:border-color .3s, background .3s; }
+.hcard:hover { border-color:rgba(107,143,173,.3); background:rgba(107,143,173,.04); }
+.hcard-year { font-family:'Cormorant Garamond',serif; font-size:.46rem; letter-spacing:.15em; color:var(--accent); }
+.hcard-name { font-size:.7rem; letter-spacing:.07em; }
+.hcard-type { font-size:.55rem; font-style:italic; color:var(--muted); }
+.hcard-star { position:absolute; top:7px; right:8px; font-size:.7rem; color:var(--muted); transition:color .25s, transform .25s; line-height:1; }
+.hcard-star:hover { color:var(--fg); transform:scale(1.2); }
+.hcard-star.fav   { color:var(--accent); }
+#hbar-empty { font-family:'Cormorant Garamond',serif; font-size:.65rem; letter-spacing:.1em; color:var(--muted); font-style:italic; }
+
+/* ── GRAIN ── */
+body::after {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:9990; opacity:.023;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size:155px;
+}
+
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="dot"></div>
+<div id="lupa"><span id="lc"></span></div>
+
+<!-- Arc flash canvas -->
+<canvas id="arc-cvs"></canvas>
+
+<!-- HOME -->
+<div id="home" class="page">
+  <div class="wrap">
+    <span class="the-lbl">T &nbsp; H &nbsp; E</span>
+    <span class="the-logo">
+      <span class="ltr arc-letter arc-ai">A</span><span class="ltr arc-letter arc-tel">T</span><span class="ltr arc-letter arc-tel">E</span><span class="ltr arc-letter arc-tel">L</span><span class="ltr arc-letter arc-ai">I</span><span class="ltr arc-letter arc-er">E</span><span class="ltr arc-letter arc-er">R</span>
+    </span>
+    <nav class="mnav" aria-label="Hlavní navigace">
+      <a href="sarah.html#about" class="ml">S . A . R . A . H</a>
+      <a href="sarah.html#agents" class="ml">C U S T O M &nbsp; A G E N T S</a>
+      <a href="sarah.html#contact" class="ml">C O N T A C T &nbsp; & &nbsp; S E C U R I T Y</a>
+    </nav>
+  </div>
+</div>
+
+<!-- THE -->
+<div id="the" class="page">
+  <div class="prose">
+    <p class="big">Kreativní studio zaměřené na<br>vizuální identitu a digitální obsah.</p>
+    <p class="soft">Věříme v sílu minimalismu.<br>V detailu, který přetrvává.</p>
+    <p class="soft" style="margin-top:10px">Každý brand má svou duši.<br>Naší rolí je ji odhalit.</p>
+  </div>
+  <span class="back" onclick="nav('home')" role="button">← &nbsp; Z P Ě T</span>
+</div>
+
+<!-- VISUAL -->
+<div id="visual" class="page">
+  <p class="stitle">Co tvoříme</p>
+  <div class="vg">
+    <div class="vc"><div class="vi">◆</div><div class="vl">L O G O</div></div>
+    <div class="vc"><div class="vi">○</div><div class="vl">I D E N T I T A</div></div>
+    <div class="vc"><div class="vi">△</div><div class="vl">P R I N T</div></div>
+    <div class="vc"><div class="vi">□</div><div class="vl">W E B</div></div>
+    <div class="vc"><div class="vi">◎</div><div class="vl">F O T O</div></div>
+    <div class="vc"><div class="vi">✕</div><div class="vl">V I D E O</div></div>
+  </div>
+  <span class="back" onclick="nav('home')" role="button">← &nbsp; Z P Ě T</span>
+</div>
+
+<!-- CONTENT -->
+<div id="content" class="page">
+  <p class="stitle">Obsah, který komunikuje</p>
+  <div class="ba">
+    <div class="bb" style="left:22%;top:27%"><div class="br">IG</div><div class="bl">INSTAGRAM</div></div>
+    <div class="bb" style="left:50%;top:13%"><div class="br">RE</div><div class="bl">REELS</div></div>
+    <div class="bb" style="left:78%;top:27%"><div class="br">TT</div><div class="bl">TIKTOK</div></div>
+    <div class="bb" style="left:17%;top:73%"><div class="br">FB</div><div class="bl">FACEBOOK</div></div>
+    <div class="bb" style="left:50%;top:79%"><div class="br">VI</div><div class="bl">VIDEO</div></div>
+    <div class="bb" style="left:83%;top:68%"><div class="br">CP</div><div class="bl">COPY</div></div>
+  </div>
+  <span class="back" onclick="nav('home')" role="button">← &nbsp; Z P Ě T</span>
+</div>
+
+<!-- ATELIER -->
+<div id="atelier" class="page">
+  <p class="stitle">Vybrané projekty</p>
+  <div class="pg">
+    <div class="pi" onclick="goProject(0)"><div class="py">2024</div><div class="pn">NOBLESSE</div><div class="pt">Rebranding</div></div>
+    <div class="pi" onclick="goProject(1)"><div class="py">2024</div><div class="pn">FLOWTECH</div><div class="pt">Visual Identity</div></div>
+    <div class="pi" onclick="goProject(2)"><div class="py">2023</div><div class="pn">MLÝNSKÁ</div><div class="pt">Identita kavárny</div></div>
+    <div class="pi" onclick="goProject(3)"><div class="py">2023</div><div class="pn">MERIDIÁN</div><div class="pt">E-shop redesign</div></div>
+    <div class="pi" onclick="goProject(4)"><div class="py">2023</div><div class="pn">STUDIO A</div><div class="pt">Web architektů</div></div>
+    <div class="pi" onclick="goProject(5)"><div class="py">2022</div><div class="pn">PURE</div><div class="pt">Produktové video</div></div>
+  </div>
+  <div class="ct">
+    <div class="cl">K O N T A K T</div>
+    <a href="/cdn-cgi/l/email-protection#b3dbd6dfdfdcf3c7dbd6d2c7d6dfdad6c19dc0c7c6d7dadc" class="em"><span class="__cf_email__" data-cfemail="f69e939a9a99b6829e939782939a9f9384d8858283929f99">[email&#160;protected]</span></a>
+  </div>
+  <span class="back" onclick="nav('home')" role="button">← &nbsp; Z P Ě T</span>
+</div>
+
+<!-- IDENTITY -->
+<div id="identity" class="page">
+  <div class="pnav">
+    <span class="ar lft" onclick="prevP()" role="button"><span class="al"></span></span>
+    <span class="pnel" id="pnel">NOBLESSE</span>
+    <span class="ar rgt" onclick="nextP()" role="button"><span class="al"></span></span>
+  </div>
+  <div class="sb" id="sb" onmousedown="dstart(event)" ontouchstart="dstart(event)">
+    <div class="si sbf" id="sb-b">Zastaralé logo,&#10;nejednotná komunikace</div>
+    <div class="si saf" id="sb-a">Elegantní minimalistický&#10;vizuální systém</div>
+    <div class="sh" id="sh" style="left:50%"></div>
+  </div>
+  <div class="slb">
+    <span onclick="sslide(0)"   role="button">P Ů V O D N Í</span>
+    <span onclick="sslide(100)" role="button">N O V Á</span>
+  </div>
+  <div class="dots" id="dots"></div>
+  <span class="back" onclick="nav('home')" role="button">← &nbsp; Z P Ě T</span>
+</div>
+
+<!-- HISTORY BAR -->
+<div id="hbar" role="complementary" aria-label="Historie návštěv">
+  <div id="hbar-line"></div>
+  <div id="hbar-panel">
+    <div id="hbar-head">
+      <span id="hbar-title">H I S T O R I E</span>
+      <span id="hbar-close" onclick="hbarClose()" role="button">Z A V Ř Í T &nbsp; ×</span>
+    </div>
+    <div id="hbar-list">
+      <span id="hbar-empty">Zatím žádná navštívená místa.</span>
+    </div>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+'use strict';
+
+/* ── DOM REFS ── */
+var dot       = document.getElementById('dot');
+var lupa      = document.getElementById('lupa');
+var lc        = document.getElementById('lc');
+var arcCvs    = document.getElementById('arc-cvs');
+var sbEl      = document.getElementById('sb');
+var shEl      = document.getElementById('sh');
+var sbfEl     = document.querySelector('.sbf');
+var pnEl      = document.getElementById('pnel');
+var sbBEl     = document.getElementById('sb-b');
+var sbAEl     = document.getElementById('sb-a');
+var dotsEl    = document.getElementById('dots');
+var hbar      = document.getElementById('hbar');
+var hbarList  = document.getElementById('hbar-list');
+var hbarEmpty = document.getElementById('hbar-empty');
+var homePage  = document.getElementById('home');
+
+/* ── STATE ── */
+var cx = window.innerWidth  / 2;
+var cy = window.innerHeight / 2;
+var lx = cx, ly = cy;
+var onHome     = true;
+var activeId   = 'home';
+var introReady = false;
+var isMobile   = window.matchMedia('(hover:none) and (pointer:coarse)').matches;
+
+/* ── CURSOR ── */
+var CLICKABLE = '[onclick],[role="button"],a,.ml,.back,.pi,.ar,.slb span,.dd,.vc,.bb,.ltr,#hbar-close,#hbar-line,.hcard,.hcard-star';
+
+document.addEventListener('mousemove', function(e) {
+  cx = e.clientX; cy = e.clientY;
+  dot.style.left = cx + 'px';
+  dot.style.top  = cy + 'px';
+  if (!introReady) return;
+  var t  = document.elementFromPoint(cx, cy);
+  var ok = t && t.closest(CLICKABLE);
+  lupa.classList.toggle('show', !!ok);
+  if (!onHome) { lupa.classList.remove('lit'); return; }
+  var ch = null;
+  try {
+    var r = document.caretRangeFromPoint ? document.caretRangeFromPoint(cx, cy) : null;
+    if (!r && document.caretPositionFromPoint) {
+      var pos = document.caretPositionFromPoint(cx, cy);
+      if (pos) { r = document.createRange(); r.setStart(pos.offsetNode, pos.offset); }
+    }
+    if (r) {
+      var nd = r.startContainer, off = r.startOffset;
+      if (nd.nodeType === Node.TEXT_NODE && off < nd.textContent.length) ch = nd.textContent[off];
+    }
+  } catch(e) {}
+  if (ch && ch.trim() && ok) { lc.textContent = ch; lupa.classList.add('lit'); }
+  else lupa.classList.remove('lit');
+}, { passive: true });
+
+(function tick() {
+  lx += (cx - lx) * .13; ly += (cy - ly) * .13;
+  lupa.style.left = lx + 'px'; lupa.style.top = ly + 'px';
+  requestAnimationFrame(tick);
+}());
+
+/* ════════════════════════════════════════
+   INTRO — TŘÍFÁZOVÝ REVEAL
+
+   Mobil: vždy  → arc flash + auto sekvence
+   Desktop 1.   → čeká na pohyb myši + auto sekvence
+   Desktop 2.+  → arc flash + auto sekvence
+
+   Auto sekvence (~1.75s celkem):
+     0ms   → p-the : THE se objeví
+     400ms → p1    : A+I svítí modře
+     950ms → p2    : vše viditelné, glow mizí
+     1800ms→ finish: odebrány třídy, introReady = true
+════════════════════════════════════════ */
+
+function setupIntroElements() {
+  /* Skryj vše inline — bez CSS tříd, bez konfliktů */
+  homePage.querySelectorAll('.the-lbl, .ltr, .ml').forEach(function(el) {
+    el.style.opacity = '0';
+  });
+}
+
+function introFinish() {
+  homePage.querySelectorAll('.the-lbl, .ltr, .ml').forEach(function(el) {
+    el.style.opacity    = '';
+    el.style.color      = '';
+    el.style.textShadow = '';
+    el.style.transition = '';
+  });
+  document.body.classList.remove('p0');
+  introReady = true;
+  hbarRender();
+  document.querySelectorAll('.arc-letter').forEach(function(el, i) {
+    el.setAttribute('data-char', el.textContent);
+    el.classList.add('arc-live');
+    el.style.setProperty('--d', (i * 0.32) + 's');
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════
+   FOTOREALISTICKÝ BLESK
+
+   Jak funguje skutečný blesk:
+   — Celá větevnatá struktura existuje OKAMŽITĚ, nemizí postupně
+   — Trvá 50–150ms pak TEMNOTA — pak další záblesk jinak větvený
+   — Osvětluje okolní prostředí (ambient flash na celé obrazovce)
+   — Extrémně jasné bílé jádro, modrofialová koróna
+   — Série 3–5 výbojů, každý jiný, pak ticho
+
+   Implementace:
+   — `flashes[]` = časovaná sekvence výbojů
+   — Každý výboj přegeneruje větve → pokaždé jiný tvar
+   — Canvas = jen světlo, žádné geometrické čáry
+════════════════════════════════════════════════════════════════ */
+
+function runIntroSequence() {
+  var W = window.innerWidth, H = window.innerHeight;
+  var ltrs   = Array.from(homePage.querySelectorAll('.ltr'));
+  var mls    = Array.from(homePage.querySelectorAll('.ml'));
+  var theLbl = homePage.querySelector('.the-lbl');
+
+  /* ── Cíl: T ve slově THE ── */
+  var tRect = theLbl ? theLbl.getBoundingClientRect() : null;
+  var TX = tRect ? tRect.left + tRect.width  * 0.06 : W * 0.28;
+  var TY = tRect ? tRect.top  + tRect.height * 0.5  : H * 0.38;
+
+  arcCvs.style.display = 'block';
+  arcCvs.width = W; arcCvs.height = H;
+  var ctx = arcCvs.getContext('2d');
+
+  /* ══════════════════════════════════════════════════════════════
+     FOTOREALISTICKÝ BLESK  v2
+
+     Jak vypadá skutečný blesk na videu:
+     ─ Celá větvená struktura se zobrazí NAJEDNOU (ne postupně)
+     ─ Trvá 1–3 snímky (16–50ms), pak okamžitá TEMNOTA
+     ─ Série 2–4 výbojů s pauzami 60–120ms tmy mezi nimi
+     ─ Každý výboj má JINÝ tvar větví (nová randomizace)
+     ─ Osvětlení scény: rychlý bílý záblesk celé obrazovky
+     ─ Jádro blesku: čistě bílé, tenké, ostré
+     ─ Koróna: tlusté, rozmazané, modrofialové světlo
+     ─ Větve: rekurzivně se dělí, slábnou hloubkou
+  ══════════════════════════════════════════════════════════════ */
+
+  /* ── Rekurzivní větev — kreslí CELOU strukturu najednou ── */
+  function bolt(x1, y1, x2, y2, depth, alpha) {
+    if (depth === 0 || alpha < 0.12) return;  /* vyšší práh = žádné duchy */
+    var dx = x2-x1, dy = y2-y1;
+    var len = Math.sqrt(dx*dx + dy*dy);
+    if (len < 2) return;
+
+    /* Rozlom na 6–10 lomených segmentů — hustší = realističtější */
+    var segs = 6 + Math.floor(Math.random() * 5);
+    var nx = -dy/len, ny = dx/len;   /* normála */
+    var pts = [{x:x1, y:y1}];
+    var spread = depth === 5 ? 0.38 : 0.28;  /* hlavní kanál méně zubaté */
+    for (var i = 1; i < segs; i++) {
+      var t   = i / segs;
+      var off = (Math.random() - 0.5) * len * spread;
+      pts.push({ x: x1 + dx*t + nx*off, y: y1 + dy*t + ny*off });
+    }
+    pts.push({x:x2, y:y2});
+
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+    for (var s = 0; s < pts.length-1; s++) {
+      var ax = pts[s].x,   ay = pts[s].y;
+      var bx = pts[s+1].x, by = pts[s+1].y;
+
+      /* Vrstva 1: vnější záře — silná, rozmazaná, fialovo-modrá */
+      ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by);
+      ctx.strokeStyle = 'rgba(100,140,255,' + (alpha * 0.18) + ')';
+      ctx.lineWidth   = (18 + depth * 4) * alpha;
+      ctx.shadowColor = 'rgba(80,100,255,1)';
+      ctx.shadowBlur  = 18;
+      ctx.stroke();
+
+      /* Vrstva 2: střední záře — světle modrá */
+      ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by);
+      ctx.strokeStyle = 'rgba(180,210,255,' + (alpha * 0.55) + ')';
+      ctx.lineWidth   = (5 + depth * 1.5) * alpha;
+      ctx.shadowColor = 'rgba(160,200,255,1)';
+      ctx.shadowBlur  = 6;
+      ctx.stroke();
+
+      /* Vrstva 3: vnitřní kanál — téměř bílý */
+      ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by);
+      ctx.strokeStyle = 'rgba(230,240,255,' + Math.min(1, alpha * 1.2) + ')';
+      ctx.lineWidth   = (1.8 + depth * 0.4) * alpha;
+      ctx.shadowBlur  = 0;
+      ctx.stroke();
+
+      /* Vrstva 4: absolutní jádro — čistě bílé, velmi tenké, ostré */
+      ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by);
+      ctx.strokeStyle = 'rgba(255,255,255,' + Math.min(1, alpha * 1.6) + ')';
+      ctx.lineWidth   = Math.max(0.4, 0.7 * alpha);
+      ctx.shadowBlur  = 0;
+      ctx.stroke();
+
+      /* Větve — dělí se z náhodného bodu segmentu */
+      if (depth > 1 && Math.random() > 0.42) {
+        var bx2 = ax + (bx-ax)*0.3 + (Math.random()-0.5)*6;
+        var by2 = ay + (by-ay)*0.3 + (Math.random()-0.5)*6;
+        var ang = Math.atan2(by-ay, bx-ax)
+                  + (Math.random()>0.5 ? 1:-1) * (0.35 + Math.random()*0.65);
+        var bl  = len * (0.25 + Math.random() * 0.55);
+        bolt(bx2, by2, bx2 + Math.cos(ang)*bl, by2 + Math.sin(ang)*bl,
+             depth - 1, alpha * (0.28 + Math.random()*0.15));
+      }
+    }
+    ctx.shadowBlur = 0;
+  }
+
+  /* ── Ambient: osvětlení scény záblesem ── */
+  function ambient(intensity) {
+    /* Při přepálení (intensity > 1) → celá obrazovka bělá */
+    var overburn = Math.max(0, intensity - 1.0);
+    ctx.fillStyle = 'rgba(230,238,255,' + Math.min(0.98, intensity * 0.13 + overburn * 0.7) + ')';
+    ctx.fillRect(0, 0, W, H);
+
+    /* Soustředěná záře kolem místa zásahu */
+    var r  = W * 0.45;
+    var gr = ctx.createRadialGradient(TX, TY, 0, TX, TY, r);
+    gr.addColorStop(0,    'rgba(220,235,255,' + Math.min(1, intensity * 0.55 + overburn * 0.8) + ')');
+    gr.addColorStop(0.08, 'rgba(180,210,255,' + (intensity * 0.30) + ')');
+    gr.addColorStop(0.25, 'rgba(120,170,255,' + (intensity * 0.12) + ')');
+    gr.addColorStop(0.6,  'rgba(60,100,200,'  + (intensity * 0.04) + ')');
+    gr.addColorStop(1,    'rgba(0,0,0,0)');
+    ctx.fillStyle = gr;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  /* ── Oslnění v místě zásahu — přepálený pixel ── */
+  function strikeGlow(intensity) {
+    var ri = intensity * 70;
+    var gi = ctx.createRadialGradient(TX, TY, 0, TX, TY, ri);
+    gi.addColorStop(0,    'rgba(255,255,255,' + Math.min(1, intensity * 1.4) + ')');
+    gi.addColorStop(0.06, 'rgba(240,248,255,' + (intensity * 0.95) + ')');
+    gi.addColorStop(0.2,  'rgba(200,225,255,' + (intensity * 0.55) + ')');
+    gi.addColorStop(0.5,  'rgba(120,170,255,' + (intensity * 0.18) + ')');
+    gi.addColorStop(1,    'rgba(0,0,0,0)');
+    ctx.fillStyle = gi;
+    ctx.fillRect(TX - ri, TY - ri, ri*2, ri*2);
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     SEKVENCE VÝBOJŮ — fotorealistická časová osa
+
+     Skutečný blesk = série diskrétních výbojů oddělených tmou.
+     Každý výboj trvá 1–3 snímky (16–48ms), pak okamžitá tma.
+
+     Format: [start_ms, duration_ms, intensity, faze]
+       faze 0 = blesk přichází  (roh → T, bez forku)
+       faze 1 = po zásahu       (+ fork dolů od T)
+       faze 2 = dozvuk          (slabý fork, jen ambient)
+
+     Pauzy mezi výboji = realistická tma.
+  ══════════════════════════════════════════════════════════ */
+  var SEQ = [
+    /*  start  dur  int   faze */
+    [    0,   30, 0.70,  0 ],
+    [   80,   20, 0.55,  0 ],
+    [  150,   40, 1.55,  0 ],
+  ];
+
+  var FREEZE_START = 185;
+  var FREEZE_END   = 1150;
+  var STRIKE       = 150;
+  var HALF         = 1200;
+  var BOTTOM       = 1180;
+  var GLOW_START   = 1650;
+  var GLOW_END     = 3800;
+
+  /* ── Blesk 2 a 3 — spouštěné přes setTimeout ── */
+  /* Každý běží nezávisle na SEQ, má vlastní start čas a trvání  */
+  var b2Start = -1, b2Dur = 100;   /* blesk 2: z A → T při odhalení ATELIER */
+  var b3Start = -1, b3Dur = 110;   /* blesk 3: z nad-A → T → lišta          */
+
+  /* Souřadnice A změříme až HALF spustí — tou dobou jsou písmena v DOM */
+  var AX = -1, AY = -1, A3X = -1, A3Y = -1;
+
+  var struck = false, halfDone = false, barDone = false,
+      aiOut  = false, navDone  = false;
+  var startT   = performance.now();
+  var freezeAt = -1;
+  var frozen   = false;
+
+  function draw(now) {
+    var el;
+    if (!frozen) {
+      el = now - startT;
+      if (el >= FREEZE_START) { frozen = true; freezeAt = now; }
+    } else {
+      if ((now - freezeAt) >= (FREEZE_END - FREEZE_START)) {
+        startT += (now - freezeAt) - (FREEZE_END - FREEZE_START);
+        frozen  = false;
+        el = now - startT;
+      } else {
+        el = FREEZE_START;
+      }
+    }
+
+    /* ── ZÁSAH 1: THE + A I ── */
+    if (!struck && el >= STRIKE) {
+      struck = true;
+      if (theLbl) { theLbl.style.transition = 'none'; theLbl.style.opacity = '1'; }
+      ltrs.forEach(function(ltr) {
+        var ch = ltr.textContent.trim();
+        if (ch === 'A' || ch === 'I') {
+          ltr.style.transition = 'none';
+          ltr.style.opacity    = '1';
+          ltr.style.color      = '#d8eeff';
+          ltr.style.textShadow =
+            '0 0 2px #fff, 0 0 8px #fff,' +
+            '0 0 18px rgba(140,200,255,1),' +
+            '0 0 35px rgba(100,170,255,1),' +
+            '0 0 70px rgba(80,150,255,.8),' +
+            '0 0 120px rgba(60,120,255,.4)';
+        }
+      });
+    }
+
+    ctx.clearRect(0, 0, W, H);
+
+    /* ── SEQ blesk 1 ── */
+    var activeSeq = null;
+    for (var i = 0; i < SEQ.length; i++) {
+      var s = SEQ[i], t = el - s[0];
+      if (t >= 0 && t < s[1]) { activeSeq = s; break; }
+    }
+    if (activeSeq) {
+      var prog      = (el - activeSeq[0]) / activeSeq[1];
+      var intensity = activeSeq[2] * Math.pow(1 - prog, 1.6);
+      ambient(intensity);
+      bolt(W * 0.97, H * -0.02, TX, TY, 5, intensity);
+      if (intensity > 0.1) strikeGlow(intensity);
+    }
+
+    /* ── Blesk 2: z A ve slově ATELIER → T v THE ── */
+    if (b2Start > 0) {
+      var b2p = (now - b2Start) / b2Dur;
+      if (b2p <= 1.0) {
+        var b2i = 1.10 * Math.pow(1 - b2p, 1.4);
+        ambient(b2i * 0.7);
+        bolt(AX, AY, TX, TY, 5, b2i);
+        strikeGlow(b2i * 0.8);
+      }
+    }
+
+    /* ── Blesk 3: z bodu nad A → T → dolů do lišty ── */
+    if (b3Start > 0) {
+      var b3p = (now - b3Start) / b3Dur;
+      if (b3p <= 1.0) {
+        var b3i = 1.20 * Math.pow(1 - b3p, 1.4);
+        ambient(b3i * 0.8);
+        bolt(A3X, A3Y, TX, TY, 4, b3i * 0.65);
+        bolt(TX, TY, W * 0.50, H * 1.01, 5, b3i);
+        bolt(TX, TY, W * 0.04, H * 1.01, 3, b3i * 0.45);
+        bolt(TX, TY, W * 0.96, H * 1.01, 3, b3i * 0.45);
+        strikeGlow(b3i);
+      }
+    }
+
+    /* ── Spouštěče obsahu ── */
+
+    if (!halfDone && el >= HALF) {
+      halfDone = true;
+      /* Změříme A až teď — písmena jsou v DOM a mají správný rect */
+      var aEl = ltrs[0];
+      var ar  = aEl.getBoundingClientRect();
+      AX  = ar.left + ar.width  * 0.5;
+      AY  = ar.top  + ar.height * 0.5;
+      A3X = AX;
+      A3Y = ar.top  - ar.height * 1.0;
+      /* Spustíme blesk 2 okamžitě */
+      b2Start = performance.now();
+
+      ltrs.forEach(function(ltr, i) {
+        var ch = ltr.textContent.trim();
+        if (ch !== 'A' && ch !== 'I') {
+          setTimeout(function() {
+            ltr.style.transition = 'opacity .2s ease';
+            ltr.style.opacity    = '1';
+          }, i * 45);
+        }
+      });
+    }
+
+    if (!barDone && el >= BOTTOM) {
+      barDone = true;
+      /* Spustíme blesk 3 s malým zpožděním — aby bylo vidět THE ATELIER */
+      setTimeout(function() { b3Start = performance.now(); }, 400);
+      setTimeout(function() {
+        hbarRender();
+        hbar.classList.add('open');
+      }, 500);
+    }
+
+    if (!aiOut && el >= 1800) {
+      aiOut = true;
+      ltrs.forEach(function(ltr) {
+        var ch = ltr.textContent.trim();
+        if (ch === 'A' || ch === 'I') {
+          ltr.style.transition  = 'color 1.2s ease, text-shadow 1.2s ease';
+          ltr.style.color       = '';
+          ltr.style.textShadow  = '';
+        }
+      });
+    }
+
+    if (!navDone && el >= 1350) {
+      navDone = true;
+      mls.forEach(function(ml, i) {
+        setTimeout(function() {
+          ml.style.transition = 'opacity .5s ease';
+          ml.style.opacity    = '1';
+        }, i * 80);
+      });
+    }
+
+    if (el < GLOW_END) {
+      requestAnimationFrame(draw);
+    } else {
+      ctx.clearRect(0, 0, W, H);
+      arcCvs.style.display = 'none';
+      setTimeout(introFinish, 300);
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+
+
+/* ── BOOTSTRAP ── */
+setupIntroElements();
+homePage.classList.add('on');
+
+/* Tři rAF: zajistí plné vykreslení před animací */
+requestAnimationFrame(function() {
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      runIntroSequence();
+    });
+  });
+});
+
+/* ── NAVIGATION ── */
+function nav(id, record) {
+  if (record === undefined) record = true;
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('on'); });
+  document.getElementById(id).classList.add('on');
+  activeId = id;
+  onHome = (id === 'home');
+  document.body.classList.toggle('subpage', !onHome);
+  if (id === 'identity') { mkdots(); upslide(); }
+  if (record && introReady) hbarOpen();
+}
+
+/* ── PROJECTS ── */
+var PX = [
+  { n:'NOBLESSE', y:'2024', t:'Rebranding',      b:'Zastaralé logo,\nnejednotná komunikace',  a:'Elegantní minimalistický\nvizuální systém'  },
+  { n:'FLOWTECH', y:'2024', t:'Visual Identity',  b:'Generický startup vzhled',                 a:'Inovativní dynamická identita'              },
+  { n:'MLÝNSKÁ',  y:'2023', t:'Identita kavárny', b:'Náhodný vizuál,\nžádná konzistence',       a:'Útulná kavárenská\natmosféra'              },
+  { n:'MERIDIÁN', y:'2023', t:'E-shop redesign',  b:'Zastaralý e-shop,\nnízká konverze',        a:'Clean UX, premium feel, +40%'              },
+  { n:'STUDIO A', y:'2023', t:'Web architektů',   b:'Amatérský web,\nslabá prezentace',         a:'Galerie architektury,\neditorial layout'   },
+  { n:'PURE',     y:'2022', t:'Produktové video', b:'Stock fotografie,\nžádná emoce',           a:'Art direction,\nproduktová fotografie'     }
+];
+var pi = 0;
+
+function goProject(i) { pi = i; hbarRecord(PX[i]); nav('identity'); }
+function prevP() { pi = (pi - 1 + PX.length) % PX.length; upslide(); }
+function nextP() { pi = (pi + 1) % PX.length; upslide(); }
+function upslide() {
+  var p = PX[pi];
+  pnEl.style.opacity = '0';
+  setTimeout(function() { pnEl.textContent = p.n; pnEl.style.opacity = '1'; }, 160);
+  sbBEl.textContent = p.b;
+  sbAEl.textContent = p.a;
+  sslide(50);
+  mkdots();
+}
+function mkdots() {
+  dotsEl.innerHTML = '';
+  PX.forEach(function(_, i) {
+    var d = document.createElement('span');
+    d.className = 'dd' + (i === pi ? ' on' : '');
+    d.onclick = (function(idx) { return function() { pi = idx; upslide(); }; })(i);
+    dotsEl.appendChild(d);
+  });
+}
+
+/* ── SLIDER ── */
+var drag = false;
+function sslide(p) {
+  shEl.style.left = p + '%';
+  sbfEl.style.clipPath = 'inset(0 ' + (100 - p) + '% 0 0)';
+}
+function dstart(e) { drag = true; dmove(e); e.preventDefault(); }
+function dmove(e) {
+  if (!drag) return;
+  var r = sbEl.getBoundingClientRect();
+  var x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+  sslide(Math.max(0, Math.min(100, (x / r.width) * 100)));
+}
+document.addEventListener('mousemove',  dmove, { passive: true });
+document.addEventListener('touchmove',  function(e) { dmove(e); e.preventDefault(); }, { passive: false });
+document.addEventListener('mouseup',    function() { drag = false; });
+document.addEventListener('touchend',   function() { drag = false; });
+
+/* ── HISTORY BAR ── */
+var LS_H = 'ta_hist';
+var LS_F = 'ta_favs';
+function hLoad()  { try { return JSON.parse(localStorage.getItem(LS_H) || '[]'); } catch(e) { return []; } }
+function hSave(a) { localStorage.setItem(LS_H, JSON.stringify(a)); }
+function fLoad()  { try { return JSON.parse(localStorage.getItem(LS_F) || '[]'); } catch(e) { return []; } }
+function fSave(a) { localStorage.setItem(LS_F, JSON.stringify(a)); }
+
+function hbarRecord(proj) {
+  var h = hLoad().filter(function(p) { return p.n !== proj.n; });
+  h.unshift({ n: proj.n, y: proj.y, t: proj.t });
+  if (h.length > 20) h = h.slice(0, 20);
+  hSave(h);
+  hbarRender();
+}
+function hbarToggleFav(name) {
+  var f = fLoad();
+  if (f.indexOf(name) >= 0) {
+    f = f.filter(function(x) { return x !== name; });
+  } else {
+    f = f.concat([name]);
+  }
+  fSave(f);
+  hbarRender();
+}
+function hbarRender() {
+  var hist = hLoad(), favs = fLoad();
+  hbarList.innerHTML = '';
+  if (!hist.length) { hbarList.appendChild(hbarEmpty); return; }
+  var sorted = hist.filter(function(p) { return favs.indexOf(p.n) >= 0; })
+                   .concat(hist.filter(function(p) { return favs.indexOf(p.n) < 0; }));
+  sorted.forEach(function(p) {
+    var card = document.createElement('div');
+    card.className = 'hcard';
+    card.onclick = (function(proj) {
+      return function() {
+        pi = PX.findIndex(function(x) { return x.n === proj.n; });
+        if (pi < 0) pi = 0;
+        goProject(pi);
+        hbarClose();
+      };
+    })(p);
+    var isFav = favs.indexOf(p.n) >= 0;
+    card.innerHTML = '<div class="hcard-year">' + p.y + '</div>'
+      + '<div class="hcard-name">' + p.n + '</div>'
+      + '<div class="hcard-type">' + p.t + '</div>'
+      + '<span class="hcard-star' + (isFav ? ' fav' : '') + '">'
+      + (isFav ? '★' : '★') + '</span>';
+    card.querySelector('.hcard-star').addEventListener('click', (function(name) {
+      return function(e) { e.stopPropagation(); hbarToggleFav(name); };
+    })(p.n));
+    hbarList.appendChild(card);
+  });
+}
+var hbarTimer = null;
+function hbarOpen() {
+  if (!hLoad().length) return;
+  hbarRender();
+  hbar.classList.add('open');
+  clearTimeout(hbarTimer);
+  hbarTimer = setTimeout(hbarClose, 6000);
+}
+function hbarClose() { hbar.classList.remove('open'); }
+
+document.getElementById('hbar-line').addEventListener('mouseenter', function() {
+  hbarRender(); hbar.classList.add('open'); clearTimeout(hbarTimer);
+});
+document.getElementById('hbar-line').addEventListener('touchstart', function() {
+  hbarRender(); hbar.classList.add('open'); clearTimeout(hbarTimer);
+}, { passive: true });
+hbarRender();
+
+/* ── KEYBOARD ── */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    if (hbar.classList.contains('open')) { hbarClose(); return; }
+    if (!onHome) nav('home');
+  }
+  if (e.key === 'ArrowLeft'  && activeId === 'identity') prevP();
+  if (e.key === 'ArrowRight' && activeId === 'identity') nextP();
+});
+
+</script>
+</body>
+</html>
