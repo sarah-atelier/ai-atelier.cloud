@@ -789,8 +789,8 @@ button[type="submit"]:hover { opacity:.85; }
       <div class="contact-row">
         <div class="contact-icon">&#9993;</div>
         <div>
-          <div class="label-small">Email</div>
-          <div class="value">hello@sarah.ai</div>
+          <div class="value">sales@ai-atelier.cloud</div>
+          <div class="value" style="margin-top:4px; font-size:.9rem; color:var(--muted);">servis@ai-atelier.cloud</div>
         </div>
       </div>
       <div class="contact-row">
@@ -798,6 +798,7 @@ button[type="submit"]:hover { opacity:.85; }
         <div>
           <div class="label-small">Location</div>
           <div class="value">Prague, Czech Republic</div>
+          <div class="value" style="margin-top:4px; font-size:.9rem; color:var(--muted);">Bekasi, Indonesia</div>
         </div>
       </div>
       <div class="contact-row">
@@ -809,7 +810,8 @@ button[type="submit"]:hover { opacity:.85; }
       </div>
     </div>
     <div>
-      <form onsubmit="event.preventDefault(); alert('Connect this to your form handler.');">
+      <form onsubmit="event.preventDefault(); alert('Message will be sent to sales@ai-atelier.cloud. Connect this to your form handler.');">
+        <input type="hidden" name="recipient" value="sales@ai-atelier.cloud">
         <div class="form-grid">
           <input type="text" placeholder="First Name" required>
           <input type="text" placeholder="Last Name" required>
