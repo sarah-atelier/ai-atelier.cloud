@@ -1168,16 +1168,16 @@ button[type="submit"]:hover { opacity:.85; }
       </div>
     </div>
     <div>
-      <form onsubmit="event.preventDefault(); alert('Connect this to your form handler.');">
+      <form action="https://formspree.io/f/mjgzkjyw" method="POST">
         <div class="form-grid">
-          <input type="text" placeholder="First Name" required>
-          <input type="text" placeholder="Last Name" required>
+          <input type="text" name="firstName" placeholder="First Name" required>
+          <input type="text" name="lastName" placeholder="Last Name" required>
         </div>
         <div class="form-grid">
-          <input type="email" placeholder="Email Address" required>
-          <input type="text" placeholder="Company">
+          <input type="email" name="email" placeholder="Email Address" required>
+          <input type="text" name="company" placeholder="Company">
         </div>
-        <select style="width:100%; padding:14px 18px; margin-bottom:16px; background:rgba(238,235,228,.04); border:1px solid var(--border); color:var(--muted); font-family:inherit; font-size:.95rem;">
+        <select name="industry" style="width:100%; padding:14px 18px; margin-bottom:16px; background:rgba(238,235,228,.04); border:1px solid var(--border); color:var(--muted); font-family:inherit; font-size:.95rem;">
           <option value="">Industry</option>
           <option value="real-estate">Real Estate</option>
           <option value="travel">Travel &amp; Hospitality</option>
@@ -1186,7 +1186,7 @@ button[type="submit"]:hover { opacity:.85; }
           <option value="finance">Finance</option>
           <option value="other">Other</option>
         </select>
-        <textarea placeholder="Tell us about your workflows and pain points..."></textarea>
+        <textarea name="message" placeholder="Tell us about your workflows and pain points..."></textarea>
         <button type="submit">Send Message</button>
       </form>
     </div>
