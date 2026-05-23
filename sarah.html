@@ -3,19 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>S.A.R.A.H. — AI Orchestrator & Agents</title>
+<title>S.A.R.A.H. — Bespoke Offline AI Orchestration</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;1,400&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 :root {
-  --bg:     #070707;
-  --fg:     #eeebe4;
-  --muted:  rgba(238,235,228,.55);
-  --accent: #6b8fad;
-  --border: rgba(238,235,228,.07);
-  --glass:  rgba(26,26,26,.85);
+  --bg:     #f0ede6;
+  --fg:     #1a2a4a;
+  --muted:  rgba(26,42,74,.72);
+  --accent: #3d5a7a;
+  --border: rgba(26,42,74,.12);
+  --glass:  rgba(255,255,255,.82);
   --ease:   cubic-bezier(.4,0,.2,1);
+  --success:rgba(40,160,100,.9);
 }
 html { scroll-behavior:smooth; }
 body {
@@ -24,20 +25,25 @@ body {
   line-height:1.7; overflow-x:hidden;
 }
 
+/* ── UTILITIES ── */
+.reveal { opacity:0; transform:translateY(24px); transition:opacity .8s var(--ease), transform .8s var(--ease); }
+.reveal.visible { opacity:1; transform:translateY(0); }
+
 /* ── NAV ── */
 .nav {
   position:fixed; top:0; left:0; right:0; z-index:100;
-  background:rgba(7,7,7,.92); backdrop-filter:blur(12px);
+  background:rgba(240,237,230,.92); backdrop-filter:blur(12px);
   border-bottom:1px solid var(--border);
   padding:16px 40px; display:flex;
-  align-items:center; justify-content:space-between;
+  align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
 }
 .nav-logo {
   font-family:'Cormorant Garamond',serif;
   font-size:1.1rem; letter-spacing:.22em;
-  color:var(--fg); text-decoration:none;
+  color:var(--fg); text-decoration:none; display:flex; align-items:center; gap:12px;
 }
-.nav-links { display:flex; gap:32px; }
+.nav-logo img { height:40px; width:auto; display:block; }
+.nav-links { display:flex; gap:28px; align-items:center; }
 .nav-links a {
   font-family:'Cormorant Garamond',serif;
   font-size:.65rem; letter-spacing:.28em;
@@ -62,9 +68,23 @@ body {
 }
 .nav-home:hover { color:var(--fg); border-color:var(--accent); }
 
+.lang-switch {
+  position:relative;
+}
+.lang-switch select {
+  background:transparent; color:var(--muted); border:1px solid var(--border);
+  font-family:'Cormorant Garamond',serif; font-size:.65rem; letter-spacing:.2em;
+  text-transform:uppercase; padding:6px 24px 6px 10px; cursor:pointer; outline:none;
+  appearance:none; -webkit-appearance:none;
+}
+.lang-switch::after {
+  content:'▼'; position:absolute; right:8px; top:50%; transform:translateY(-50%);
+  font-size:.5rem; color:var(--muted); pointer-events:none;
+}
+
 /* ── SECTIONS ── */
 .section { padding:100px 40px; position:relative; }
-.section-alt { background:rgba(238,235,228,.02); }
+.section-alt { background:rgba(26,42,74,.03); }
 .section-header {
   text-align:center; max-width:700px; margin:0 auto 60px;
 }
@@ -121,39 +141,81 @@ p.lead {
 }
 .status {
   display:inline-flex; align-items:center; gap:6px;
-  font-size:.7rem; color:rgba(100,200,150,.9);
+  font-size:.7rem; color:var(--success);
   margin-bottom:12px;
 }
 .status-dot {
   width:6px; height:6px; border-radius:50%;
-  background:rgba(100,200,150,.9);
+  background:var(--success);
   box-shadow:0 0 6px currentColor;
 }
 
 /* ── HERO ── */
 .hero {
-  min-height:70vh; display:flex; flex-direction:column;
+  min-height:90vh; display:flex; flex-direction:column;
   align-items:center; justify-content:center; text-align:center;
   padding:140px 40px 80px; position:relative;
 }
 .hero::before {
   content:''; position:absolute; inset:0;
-  background:radial-gradient(ellipse at 50% 30%, rgba(107,143,173,.08) 0%, transparent 60%);
+  background:radial-gradient(ellipse at 50% 30%, rgba(107,143,173,.14) 0%, transparent 60%);
   pointer-events:none;
 }
-.hero-content { position:relative; z-index:1; max-width:700px; }
+.hero-content { position:relative; z-index:1; max-width:780px; }
 .hero h1 {
   font-family:'Cormorant Garamond',serif;
-  font-size:clamp(2.4rem,6vw,4rem); font-weight:300;
+  font-size:clamp(2.6rem,6vw,4.2rem); font-weight:300;
   letter-spacing:.06em; line-height:1.15; margin-bottom:20px;
 }
 .hero h1 span { color:var(--accent); }
 .hero p { font-size:1.1rem; color:var(--muted); line-height:1.8; }
 .hero .tagline {
   font-family:'Cormorant Garamond',serif;
-  font-size:1.5rem;
-  color:var(--accent);
-  text-align:center;
+  font-size:1.35rem; color:var(--accent); text-align:center; margin-top:12px;
+}
+.hero .spec-ticker {
+  display:flex; flex-wrap:wrap; justify-content:center; gap:24px; margin-top:40px;
+}
+.ticker-item {
+  font-family:'Cormorant Garamond',serif; font-size:.75rem; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--muted);
+  border:1px solid var(--border); padding:10px 20px;
+}
+.ticker-item strong { color:var(--fg); font-weight:400; }
+
+/* CTA Buttons */
+.cta-row { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:36px; }
+.btn-primary {
+  background:var(--accent); color:var(--bg); border:none;
+  padding:16px 36px; font-family:inherit; font-size:.85rem;
+  letter-spacing:.2em; text-transform:uppercase; cursor:pointer;
+  transition:opacity .38s, transform .38s;
+}
+.btn-primary:hover { opacity:.9; transform:translateY(-2px); }
+.btn-ghost {
+  background:transparent; color:var(--fg); border:1px solid var(--border);
+  padding:16px 36px; font-family:inherit; font-size:.85rem;
+  letter-spacing:.2em; text-transform:uppercase; cursor:pointer;
+  transition:all .38s;
+}
+.btn-ghost:hover { border-color:var(--accent); color:var(--accent); }
+
+/* ── SPEC SHEET ── */
+.spec-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:16px; max-width:1000px; margin:0 auto;
+}
+.spec-item {
+  background:var(--glass); border:1px solid var(--border); padding:28px;
+  text-align:center; transition:all .4s var(--ease);
+}
+.spec-item:hover { border-color:rgba(107,143,173,.3); }
+.spec-value {
+  font-family:'Cormorant Garamond',serif; font-size:1.6rem; color:var(--accent);
+  margin-bottom:6px;
+}
+.spec-label {
+  font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted);
 }
 
 /* ── CASE STUDY CARDS ── */
@@ -221,10 +283,6 @@ p.lead {
   grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
   gap:24px; max-width:1200px; margin:0 auto;
 }
-@media (max-width:768px) {
-  .cs-grid { grid-template-columns:1fr; }
-  .cs-card { padding:28px; }
-}
 
 /* ── MISSION BOX ── */
 .mission-box {
@@ -262,7 +320,7 @@ p.lead {
   gap:16px; margin-bottom:16px;
 }
 .form-grid input, .form-grid select, textarea {
-  background:rgba(238,235,228,.04);
+  background:rgba(26,42,74,.04);
   border:1px solid var(--border); color:var(--fg);
   padding:14px 18px; font-family:inherit; font-size:.95rem;
   outline:none; transition:border-color .38s;
@@ -270,7 +328,7 @@ p.lead {
 .form-grid input:focus, .form-grid select:focus, textarea:focus {
   border-color:var(--accent);
 }
-.form-grid input::placeholder, textarea::placeholder { color:rgba(238,235,228,.25); }
+.form-grid input::placeholder, textarea::placeholder { color:rgba(26,42,74,.35); }
 .form-grid select { color:var(--muted); }
 .form-grid select option { background:var(--bg); color:var(--fg); }
 textarea { width:100%; min-height:140px; resize:vertical; margin-bottom:16px; }
@@ -301,210 +359,553 @@ button[type="submit"]:hover { opacity:.85; }
   font-size:.75rem; color:var(--muted); letter-spacing:.1em;
 }
 
+/* ── CONFIGURATOR ── */
+.configurator-layout {
+  display:grid; grid-template-columns:1fr 360px; gap:40px;
+  max-width:1200px; margin:0 auto; align-items:start;
+}
+.config-categories { display:flex; flex-direction:column; gap:32px; }
+.config-category h3 {
+  font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:400;
+  margin-bottom:16px; color:var(--fg); letter-spacing:.1em; text-transform:uppercase;
+}
+.feature-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; }
+.feature-item {
+  background:var(--glass); border:1px solid var(--border);
+  padding:18px 20px; cursor:pointer; transition:all .3s var(--ease);
+  display:flex; align-items:flex-start; gap:12px; position:relative;
+}
+.feature-item:hover { border-color:rgba(107,143,173,.25); }
+.feature-item.selected {
+  border-color:var(--accent);
+  background:rgba(107,143,173,.08);
+}
+.feature-item .f-check {
+  width:20px; height:20px; border:1px solid var(--muted); border-radius:4px;
+  flex-shrink:0; margin-top:2px; display:flex; align-items:center; justify-content:center;
+  transition:all .3s; font-size:.8rem; color:transparent;
+}
+.feature-item.selected .f-check { background:var(--accent); border-color:var(--accent); color:var(--bg); }
+.feature-item .f-info { flex:1; }
+.feature-item .f-name { font-size:.95rem; color:var(--fg); margin-bottom:4px; }
+.feature-item .f-desc { font-size:.82rem; color:var(--muted); line-height:1.5; }
+.feature-item .f-price {
+  position:absolute; top:12px; right:14px;
+  font-family:'Cormorant Garamond',serif; font-size:.85rem; color:var(--accent);
+}
+
+/* ── WIZARD ── */
+.wizard-step { display:none; }
+.wizard-step.active {
+  display:flex; flex-direction:column;
+  animation:fadeIn .4s var(--ease);
+  min-height:420px;
+}
+@keyframes fadeIn { from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:translateY(0);} }
+
+.wizard-progress {
+  display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:24px;
+}
+.wp-dot {
+  width:32px; height:32px; border-radius:50%; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Cormorant Garamond',serif; font-size:.75rem; color:var(--muted);
+  transition:all .4s var(--ease);
+}
+.wp-dot.done { background:var(--accent); color:var(--bg); border-color:var(--accent); }
+.wp-dot.current { border-color:var(--accent); color:var(--accent); }
+.wp-line {
+  width:40px; height:1px; background:var(--border); transition:background .4s;
+}
+.wp-line.done { background:var(--accent); }
+
+.wizard-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; max-width:900px; margin:0 auto;
+  max-height:calc(100vh - 340px); overflow-y:auto; padding-right:8px;
+}
+.wizard-card {
+  background:var(--glass); border:1px solid var(--border); padding:16px;
+  cursor:pointer; text-align:center; transition:all .3s var(--ease);
+}
+.wizard-card:hover { border-color:rgba(107,143,173,.3); transform:translateY(-3px); }
+.wizard-card.selected {
+  border-color:var(--accent); background:rgba(107,143,173,.08);
+  box-shadow:0 0 20px rgba(107,143,173,.1);
+}
+.wizard-card .wc-icon { font-size:1.6rem; margin-bottom:12px; }
+.wizard-card .wc-label {
+  font-family:'Cormorant Garamond',serif; font-size:1rem; color:var(--fg);
+}
+.wizard-card .wc-hint { font-size:.78rem; color:var(--muted); margin-top:6px; }
+
+.wizard-nav {
+  display:flex; justify-content:center; gap:16px; margin-top:auto; padding-top:20px;
+}
+
+/* ── PACKAGE CARDS ── */
+.package-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:24px; max-width:1100px; margin:0 auto;
+}
+.package-card {
+  background:var(--glass); border:1px solid var(--border); padding:32px;
+  position:relative; transition:all .4s var(--ease);
+}
+.package-card:hover { border-color:rgba(107,143,173,.3); transform:translateY(-4px); }
+.package-card.rec {
+  border-color:rgba(107,143,173,.4);
+  box-shadow:0 0 30px rgba(107,143,173,.06);
+}
+.package-card .rec-badge {
+  position:absolute; top:-10px; left:24px;
+  background:var(--accent); color:var(--bg);
+  font-size:.6rem; letter-spacing:.2em; text-transform:uppercase;
+  padding:4px 12px;
+}
+.package-card h4 {
+  font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:400; margin-bottom:4px;
+}
+.package-card .pkg-price {
+  font-family:'Cormorant Garamond',serif; font-size:1.8rem; color:var(--accent); margin:12px 0;
+}
+.package-card .pkg-price span {
+  font-size:.75rem; color:var(--muted); letter-spacing:.1em;
+}
+.package-card .pkg-desc { font-size:.9rem; color:var(--muted); margin-bottom:20px; line-height:1.6; }
+.package-card .pkg-plugins { margin-bottom:20px; }
+.package-card .pkg-plugin {
+  display:flex; align-items:center; gap:10px; margin-bottom:8px;
+  font-size:.82rem; color:var(--muted);
+}
+.package-card .pkg-plugin strong { color:var(--fg); font-weight:400; font-size:.88rem; }
+
+.package-card .expand-btn {
+  font-size:.78rem; color:var(--accent); cursor:pointer;
+  display:inline-flex; align-items:center; gap:6px;
+  letter-spacing:.08em; text-transform:uppercase;
+  margin-bottom:12px; border:none; background:none; font-family:inherit;
+}
+.package-card .expand-btn:hover { color:var(--fg); }
+.package-card .function-list {
+  display:none; padding-left:16px; border-left:1px solid var(--border); margin-bottom:16px;
+}
+.package-card .function-list.open { display:block; animation:fadeIn .3s; }
+.package-card .function-list li {
+  font-size:.82rem; color:var(--muted); line-height:1.8; list-style:none; position:relative; padding-left:14px;
+}
+.package-card .function-list li::before {
+  content:'•'; position:absolute; left:0; color:var(--accent);
+}
+
+/* Expert toggle */
+.expert-bar {
+  text-align:center; margin:40px 0 20px;
+}
+.expert-bar button {
+  background:transparent; color:var(--muted); border:1px solid var(--border);
+  padding:10px 24px; font-family:inherit; font-size:.72rem;
+  letter-spacing:.2em; text-transform:uppercase; cursor:pointer;
+  transition:all .38s;
+}
+.expert-bar button:hover { color:var(--accent); border-color:var(--accent); }
+
+.config-summary {
+  position:sticky; top:100px;
+  background:var(--glass); backdrop-filter:blur(12px);
+  border:1px solid var(--border); padding:28px;
+}
+.config-summary h3 {
+  font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:400;
+  margin-bottom:20px; letter-spacing:.1em; text-transform:uppercase;
+}
+.summary-line {
+  display:flex; justify-content:space-between; font-size:.9rem;
+  color:var(--muted); margin-bottom:10px;
+}
+.summary-line.total {
+  border-top:1px solid var(--border); padding-top:14px; margin-top:14px;
+  font-size:1.1rem; color:var(--fg);
+}
+.summary-line.total strong { font-family:'Cormorant Garamond',serif; font-size:1.3rem; color:var(--accent); }
+.summary-plugins { margin-bottom:16px; }
+.summary-plugins .sp {
+  font-size:.82rem; color:var(--muted); margin-bottom:6px; display:flex; justify-content:space-between;
+}
+.summary-plugins .sp strong { color:var(--fg); font-weight:400; }
+
+.config-summary .btn-primary { width:100%; margin-top:20px; }
+
+.configurator-hero {
+  text-align:center; padding-bottom:60px;
+}
+
+/* ── 3D SUMMARY VISUAL ── */
+.scene-3d {
+  perspective: 900px;
+  margin-bottom: 24px;
+  height: 200px;
+  position: relative;
+}
+.stack-3d {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: rotateX(8deg) rotateY(-6deg);
+  transition: transform .6s var(--ease);
+}
+.scene-3d:hover .stack-3d {
+  transform: rotateX(12deg) rotateY(-18deg);
+}
+.card-3d {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 220px;
+  height: 90px;
+  margin-left: -110px;
+  margin-top: -45px;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  padding: 14px 16px;
+  transform-style: preserve-3d;
+  transition: all .5s var(--ease);
+  font-size: .78rem;
+  color: var(--fg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  backface-visibility: hidden;
+  box-shadow: 0 10px 30px rgba(26,42,74,.12);
+}
+.card-3d .c3-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: .88rem;
+  color: var(--accent);
+  margin-bottom: 4px;
+  letter-spacing: .04em;
+}
+.card-3d .c3-price {
+  font-size: .72rem;
+  color: var(--muted);
+  letter-spacing: .1em;
+}
+.card-3d.more {
+  align-items: center;
+  justify-content: center;
+  border-left-color: rgba(107,143,173,.5);
+}
+.card-3d.more .c3-name {
+  font-size: 1rem;
+  color: var(--fg);
+}
+
+/* Base stack offsets */
+.card-3d:nth-child(1) { transform: translateZ(0px) translateY(52px); }
+.card-3d:nth-child(2) { transform: translateZ(16px) translateY(39px); }
+.card-3d:nth-child(3) { transform: translateZ(32px) translateY(26px); }
+.card-3d:nth-child(4) { transform: translateZ(48px) translateY(13px); }
+.card-3d:nth-child(5) { transform: translateZ(64px) translateY(0px); }
+.card-3d:nth-child(6) { transform: translateZ(80px) translateY(-13px); }
+.card-3d:nth-child(7) { transform: translateZ(96px) translateY(-26px); }
+.card-3d:nth-child(8) { transform: translateZ(112px) translateY(-39px); }
+
+/* Hover fan-out */
+.scene-3d:hover .card-3d:nth-child(1) { transform: translateZ(0px) translateY(52px) translateX(-80px) rotateY(-22deg); }
+.scene-3d:hover .card-3d:nth-child(2) { transform: translateZ(16px) translateY(39px) translateX(-55px) rotateY(-14deg); }
+.scene-3d:hover .card-3d:nth-child(3) { transform: translateZ(32px) translateY(26px) translateX(-30px) rotateY(-7deg); }
+.scene-3d:hover .card-3d:nth-child(4) { transform: translateZ(48px) translateY(13px); }
+.scene-3d:hover .card-3d:nth-child(5) { transform: translateZ(64px) translateY(0px) translateX(30px) rotateY(7deg); }
+.scene-3d:hover .card-3d:nth-child(6) { transform: translateZ(80px) translateY(-13px) translateX(55px) rotateY(14deg); }
+.scene-3d:hover .card-3d:nth-child(7) { transform: translateZ(96px) translateY(-26px) translateX(80px) rotateY(22deg); }
+.scene-3d:hover .card-3d:nth-child(8) { transform: translateZ(112px) translateY(-39px) translateX(105px) rotateY(30deg); }
+
+/* 3D Price Prism */
+.prism-scene {
+  perspective: 600px;
+  width: 100%;
+  height: 70px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.prism {
+  position: relative;
+  width: 100px;
+  height: 50px;
+  transform-style: preserve-3d;
+  animation: prismSpin 10s linear infinite;
+}
+.prism-face {
+  position: absolute;
+  width: 100px;
+  height: 50px;
+  background: rgba(107,143,173,.10);
+  border: 1px solid rgba(107,143,173,.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--accent);
+  backface-visibility: hidden;
+  text-align: center;
+}
+.prism-face .pf-big {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+.prism-face .pf-small {
+  font-size: .55rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.prism-face.front  { transform: translateZ(28.9px); }
+.prism-face.right  { transform: rotateY(120deg) translateZ(28.9px); }
+.prism-face.left   { transform: rotateY(240deg) translateZ(28.9px); }
+
+@keyframes prismSpin {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+/* Mobile configurator summary */
+@media (max-width:980px) {
+  .configurator-layout { grid-template-columns:1fr; }
+  .config-summary { position:static; margin-top:24px; }
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width:768px) {
-  .nav { padding:14px 20px; flex-wrap:wrap; gap:12px; }
-  .nav-links { gap:16px; width:100%; justify-content:center; margin-top:8px; }
+  .nav { padding:14px 20px; }
+  .nav-links { gap:14px; width:100%; justify-content:center; margin-top:8px; }
   .section { padding:60px 20px; }
   .cards { grid-template-columns:1fr; }
   .workflow { grid-template-columns:1fr; }
   .form-grid { grid-template-columns:1fr; }
+  .cs-grid { grid-template-columns:1fr; }
+  .spec-grid { grid-template-columns:1fr 1fr; }
+  .hero { min-height:auto; padding:120px 20px 60px; }
 }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(26,42,74,.45); z-index:200;
+  display:none; align-items:center; justify-content:center; backdrop-filter:blur(4px);
+}
+.modal-overlay.open { display:flex; }
+.modal-box {
+  background:var(--glass); border:1px solid var(--border);
+  max-width:480px; width:90%; padding:40px; text-align:center;
+}
+.modal-box h3 { font-family:'Cormorant Garamond',serif; font-size:1.4rem; margin-bottom:12px; }
+.modal-box p { color:var(--muted); font-size:.95rem; margin-bottom:24px; }
 </style>
 </head>
 <body>
 
 <!-- NAVIGATION -->
 <nav class="nav">
-  <a href="index.html" class="nav-logo"><img src="logo.png" alt="S.A.R.A.H." style="height:80px; width:auto;"></a>
+  <a href="index.html" class="nav-logo"><img src="logo.png" alt="S.A.R.A.H."> S.A.R.A.H.</a>
   <div class="nav-links">
-    <a href="#about">About</a>
-    <a href="#sarah">S.A.R.A.H.</a>
-    <a href="#agents">Custom Agents</a>
-    <a href="#contact">Contact</a>
-    <a href="#security">Security</a>
+    <a href="#spec" data-i18n="nav_spec">Spec</a>
+    <a href="#workforce" data-i18n="nav_workforce">AI Workforce</a>
+    <a href="#human" data-i18n="nav_human">Team</a>
+    <a href="#configurator" data-i18n="nav_config">Configurator</a>
+    <a href="#cases" data-i18n="nav_cases">Cases</a>
+    <a href="#security" data-i18n="nav_security">Security</a>
+    <a href="#contact" data-i18n="nav_contact">Contact</a>
+    <div class="lang-switch">
+      <select id="langSelect" aria-label="Language"></select>
+    </div>
   </div>
-  <a href="index.html" class="nav-home">&larr; HOME</a>
+  <a href="index.html" class="nav-home">&larr; <span data-i18n="nav_home">HOME</span></a>
 </nav>
 
-<!-- AI WORKFORCE -->
-<section class="section" id="about">
-  <div class="section-header">
-    <span class="label">Our Team</span>
-    <h2>The <span>AI Workforce</span></h2>
-    <p class="lead">A team of autonomous AI agents that never sleep, never take breaks, and continuously improve.</p>
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-content">
+    <span class="label" data-i18n="hero_label">Bespoke Offline AI Orchestration</span>
+    <h1 data-i18n="hero_title">Configure Your <span>S.A.R.A.H.</span></h1>
+    <p data-i18n="hero_sub">No cloud. No APIs. No data leaks. A modular AI platform that runs entirely on your hardware — tailored to your operations, not the other way around.</p>
+    <p class="tagline" data-i18n="hero_tagline">We build AI that listens, understands, and acts — so humans can focus on what matters.</p>
+    <div class="spec-ticker">
+      <div class="ticker-item"><strong data-i18n="ticker_loc">1M+</strong> <span data-i18n="ticker_loc_label">Lines of Logic</span></div>
+      <div class="ticker-item"><strong data-i18n="ticker_vram">8GB</strong> <span data-i18n="ticker_vram_label">VRAM Minimum</span></div>
+      <div class="ticker-item"><strong data-i18n="ticker_lat">&lt;50ms</strong> <span data-i18n="ticker_lat_label">Latency</span></div>
+      <div class="ticker-item"><strong data-i18n="ticker_mode">Air-Gapped</strong> <span data-i18n="ticker_mode_label">Operation</span></div>
+    </div>
+    <div class="cta-row">
+      <a href="#configurator" class="btn-primary" data-i18n="cta_configure">Start Configuration</a>
+      <a href="#cases" class="btn-ghost" data-i18n="cta_cases">See It in Action</a>
+    </div>
   </div>
-  <div class="cards">
+</section>
+
+<!-- S.A.R.A.H. CORE SPEC SHEET -->
+<section class="section section-alt" id="spec">
+  <div class="section-header reveal">
+    <span class="label" data-i18n="spec_label">The Core</span>
+    <h2 data-i18n="spec_title">S.A.R.A.H. <span>Specifications</span></h2>
+    <p class="lead" data-i18n="spec_lead">Engineered for total data sovereignty. Optimized for local inference on consumer-grade hardware.</p>
+  </div>
+  <div class="spec-grid reveal">
+    <div class="spec-item"><div class="spec-value">1M+</div><div class="spec-label" data-i18n="spec_loc">Lines of Proprietary Logic</div></div>
+    <div class="spec-item"><div class="spec-value">7.5M</div><div class="spec-label" data-i18n="spec_sys">System Footprint</div></div>
+    <div class="spec-item"><div class="spec-value">i7 2.4GHz</div><div class="spec-label" data-i18n="spec_cpu">Minimum CPU</div></div>
+    <div class="spec-item"><div class="spec-value">16GB</div><div class="spec-label" data-i18n="spec_ram">System RAM</div></div>
+    <div class="spec-item"><div class="spec-value">8GB</div><div class="spec-label" data-i18n="spec_vram">VRAM Required</div></div>
+    <div class="spec-item"><div class="spec-value">&lt;50ms</div><div class="spec-label" data-i18n="spec_lat">Query Latency</div></div>
+    <div class="spec-item"><div class="spec-value">0</div><div class="spec-label" data-i18n="spec_api">External APIs</div></div>
+    <div class="spec-item"><div class="spec-value">100%</div><div class="spec-label" data-i18n="spec_offline">Offline Capable</div></div>
+  </div>
+  <div style="max-width:900px; margin:48px auto 0;" class="reveal">
+    <div class="mission-box">
+      <p data-i18n="spec_desc1">S.A.R.A.H. is a modular AI platform running directly on your computer. It speaks, draws, translates, writes articles and manages content — all without cloud, without telemetry, with full control over your data.</p>
+      <p style="margin-top:20px; color:var(--fg); font-family:'Cormorant Garamond',serif; font-size:1.1rem;" data-i18n="spec_caps_title">Core Capabilities</p>
+      <p data-i18n="spec_caps">Sonus — real-time speech synthesis, video dubbing up to 10 hours<br>
+      Courbet — image generation and editing<br>
+      Linguis / Translator — translations without external APIs<br>
+      Hunter — downloading data from designated sources<br>
+      Discovery — searching for new sources by keywords<br>
+      Aggregator — merging and deduplicating content from multiple sources<br>
+      Redactor — writing and editing articles<br>
+      Syntaktis — grammar correction and language analysis<br>
+      Nexus — module integration and flow orchestration<br>
+      Vara / Resik / Cleaner — data processing, searching and cleaning</p>
+      <p style="margin-top:20px; color:var(--fg); font-family:'Cormorant Garamond',serif; font-size:1.1rem;" data-i18n="spec_req_title">System Requirements</p>
+      <p data-i18n="spec_req">On-Device: Minimum i7 2.4GHz, 16GB RAM, and 8GB VRAM.<br>Alternative: Download the self-hosted server version to offload processing.</p>
+    </div>
+  </div>
+</section>
+
+<!-- OUR AI WORKFORCE (INTERNAL AI) -->
+<section class="section" id="workforce">
+  <div class="section-header reveal">
+    <span class="label" data-i18n="wf_label">Our AI Workforce</span>
+    <h2 data-i18n="wf_title">The <span>Engine</span> Behind S.A.R.A.H.</h2>
+    <p class="lead" data-i18n="wf_lead">These autonomous AI agents power our internal development, research, and quality assurance — ensuring every module of S.A.R.A.H. is built with surgical precision.</p>
+  </div>
+  <div class="cards reveal">
     <div class="card">
       <div class="card-icon">&#128104;&#8205;&#128187;</div>
       <div class="status"><span class="status-dot"></span>Active</div>
       <h3>AI Developer</h3>
-      <p>Autonomous coding agent capable of understanding requirements, designing architecture, writing production-grade code, reviewing PRs, and maintaining legacy systems.</p>
+      <p data-i18n="wf_dev">Autonomous coding agent capable of understanding requirements, designing architecture, writing production-grade code, reviewing PRs, and maintaining legacy systems.</p>
       <div class="tags"><span class="tag">Python</span><span class="tag">TypeScript</span><span class="tag">Rust</span><span class="tag">Go</span></div>
     </div>
     <div class="card">
       <div class="card-icon">&#128202;</div>
       <div class="status"><span class="status-dot"></span>Active</div>
       <h3>AI Data Scientist</h3>
-      <p>End-to-end data science agent that cleans datasets, engineers features, trains models, evaluates performance, and deploys to production with interpretable reports.</p>
+      <p data-i18n="wf_ds">End-to-end data science agent that cleans datasets, engineers features, trains models, evaluates performance, and deploys to production with interpretable reports.</p>
       <div class="tags"><span class="tag">PyTorch</span><span class="tag">Pandas</span><span class="tag">SQL</span><span class="tag">MLflow</span></div>
     </div>
     <div class="card">
       <div class="card-icon">&#128274;</div>
       <div class="status"><span class="status-dot"></span>Active</div>
       <h3>AI Security Analyst</h3>
-      <p>24/7 security operations agent that monitors logs, audits code for vulnerabilities, manages compliance checks, and responds to threats in real-time.</p>
+      <p data-i18n="wf_sec">24/7 security operations agent that monitors logs, audits code for vulnerabilities, manages compliance checks, and responds to threats in real-time.</p>
       <div class="tags"><span class="tag">OWASP</span><span class="tag">SIEM</span><span class="tag">SAST/DAST</span><span class="tag">OSINT</span></div>
     </div>
     <div class="card">
       <div class="card-icon">&#128640;</div>
       <div class="status"><span class="status-dot"></span>Active</div>
       <h3>AI DevOps Engineer</h3>
-      <p>Infrastructure automation agent that manages CI/CD pipelines, optimizes cloud costs, auto-scales services, and ensures high availability with self-healing capabilities.</p>
+      <p data-i18n="wf_devops">Infrastructure automation agent that manages CI/CD pipelines, optimizes cloud costs, auto-scales services, and ensures high availability with self-healing capabilities.</p>
       <div class="tags"><span class="tag">Docker</span><span class="tag">K8s</span><span class="tag">Terraform</span><span class="tag">AWS/GCP</span></div>
     </div>
     <div class="card">
       <div class="card-icon">&#127912;</div>
       <div class="status"><span class="status-dot"></span>Active</div>
       <h3>AI UX Designer</h3>
-      <p>Creative agent that generates UI components, creates design systems, runs usability heuristics, and produces accessibility-compliant markup. Iterates on designs based on user analytics.</p>
+      <p data-i18n="wf_ux">Creative agent that generates UI components, creates design systems, runs usability heuristics, and produces accessibility-compliant markup. Iterates on designs based on user analytics.</p>
       <div class="tags"><span class="tag">Figma API</span><span class="tag">React</span><span class="tag">Tailwind</span><span class="tag">A11y</span></div>
     </div>
     <div class="card">
       <div class="card-icon">&#129514;</div>
       <div class="status"><span class="status-dot"></span>Active</div>
       <h3>AI QA Engineer</h3>
-      <p>Comprehensive testing agent that writes unit, integration, and E2E tests. Detects regressions, generates test data, and validates UI across devices and browsers.</p>
+      <p data-i18n="wf_qa">Comprehensive testing agent that writes unit, integration, and E2E tests. Detects regressions, generates test data, and validates UI across devices and browsers.</p>
       <div class="tags"><span class="tag">Playwright</span><span class="tag">PyTest</span><span class="tag">Jest</span><span class="tag">Cypress</span></div>
     </div>
     <div class="card">
       <div class="card-icon">&#128295;</div>
       <div class="status"><span class="status-dot"></span>Active</div>
       <h3>AI Integration Architect</h3>
-      <p>Specialist in connecting legacy systems and visual automation (Hardware Injection). Bridges the gap between old infrastructure and modern AI workflows without disrupting existing operations.</p>
+      <p data-i18n="wf_int">Specialist in connecting legacy systems and visual automation (Hardware Injection). Bridges the gap between old infrastructure and modern AI workflows without disrupting existing operations.</p>
       <div class="tags"><span class="tag">RPA</span><span class="tag">Computer Vision</span><span class="tag">Driver Level Interaction</span><span class="tag">Legacy Systems</span></div>
     </div>
   </div>
 </section>
+
 <!-- THE HUMAN CORE -->
-<section class="section section-alt">
-  <div class="section-header">
-    <span class="label">Leadership</span>
-    <h2>The <span>Human Core</span></h2>
-    <p class="lead">Leadership, strategy, and oversight of the AI ecosystem.</p>
+<section class="section section-alt" id="human">
+  <div class="section-header reveal">
+    <span class="label" data-i18n="human_label">Leadership</span>
+    <h2 data-i18n="human_title">The <span>Human Core</span></h2>
+    <p class="lead" data-i18n="human_lead">Strategy, oversight, and creative direction of the AI ecosystem.</p>
   </div>
-  <div class="cards">
+  <div class="cards reveal">
     <div class="card">
       <div class="card-icon">&#128104;&#8205;&#128188;</div>
       <h3>Michal</h3>
       <p style="color:var(--accent); font-size:.8rem; margin-bottom:8px;">CEO &amp; Logic Designer</p>
-      <p>Architect of systemic logic and product visionary. Michal designs how AI agents interpret reality and invisibly integrate modern intelligence into legacy systems. His goal is a world where people don't have to work with computers, but with people.</p>
+      <p data-i18n="human_michal">Architect of systemic logic and product visionary. Michal designs how AI agents interpret reality and invisibly integrate modern intelligence into legacy systems. His goal is a world where people don't have to work with computers, but with people.</p>
     </div>
     <div class="card">
       <div class="card-icon">&#128104;&#8205;&#128187;</div>
       <h3>Umar</h3>
       <p style="color:var(--accent); font-size:.8rem; margin-bottom:8px;">Senior Software Engineer &amp; AI Orchestrator</p>
-      <p>Umar monitors the performance and optimization of the entire AI workforce. He ensures that agents operate with maximum efficiency and lightning-fast response times. He fine-tunes their mutual communication and ensures every "hardware injection" is executed with surgical precision.</p>
+      <p data-i18n="human_umar">Umar monitors the performance and optimization of the entire AI workforce. He ensures that agents operate with maximum efficiency and lightning-fast response times. He fine-tunes their mutual communication and ensures every "hardware injection" is executed with surgical precision.</p>
     </div>
     <div class="card">
       <div class="card-icon">&#128105;&#8205;&#128187;</div>
       <h3>Rin</h3>
       <p style="color:var(--accent); font-size:.8rem; margin-bottom:8px;">Cryptograph &amp; Security Architect</p>
-      <p>Rin is the guardian of integrity and security. She programs agents with a focus on encryption and absolute data protection. Thanks to her algorithms, the system operates in a zero-footprint mode, guaranteeing that sensitive information remains secure.</p>
+      <p data-i18n="human_rin">Rin is the guardian of integrity and security. She programs agents with a focus on encryption and absolute data protection. Thanks to her algorithms, the system operates in a zero-footprint mode, guaranteeing that sensitive information remains secure.</p>
     </div>
     <div class="card">
       <div class="card-icon">&#127760;</div>
       <h3>External Network</h3>
       <p style="color:var(--accent); font-size:.8rem; margin-bottom:8px;">Scalability &amp; Specialized Talent</p>
-      <p>We collaborate with a vetted network of external developers and specialists. This flexibility allows us to rapidly scale capacity and deploy experts in specific technologies tailored to the unique needs of each project.</p>
+      <p data-i18n="human_ext">We collaborate with a vetted network of external developers and specialists. This flexibility allows us to rapidly scale capacity and deploy experts in specific technologies tailored to the unique needs of each project.</p>
     </div>
   </div>
 </section>
 
-<!-- S.A.R.A.H. -->
-<section class="section section-alt" id="sarah" style="text-align:center;">
-  <div class="section-header">
-    <span class="label">S.A.R.A.H.</span>
-    <h2>S.A.R.A.H. — <span>Your Personal AI Assistant</span></h2>
-  </div>
-  <div class="hero-content" style="padding-bottom:0; text-align:center; margin:0 auto;">
-    <span class="label">Over a million lines of unique logic in a robust 7.5M system. We bring AI tools directly to your hard drive — no need to be online, no API. No prompt writing or complex workflows. It just works.</span>
-    <h1 style="font-size:3.5rem; margin:20px 0;"><span>S.A.R.A.H.</span></h1>
-    <p>Smart AI Redactor Assistant Hub.</p>
-    <p class="tagline"><br>We build AI that listens, understands, and acts &mdash; so humans can focus on what matters.</p>
-  </div>
-  <div class="mission-box">
-    <p>S.A.R.A.H. is a modular AI platform running directly on your computer. It speaks, draws, translates, writes articles and manages content — all without cloud, without telemetry, with full control over your data.</p>
-    <p style="margin-top:20px; color:var(--fg); font-family:'Cormorant Garamond',serif; font-size:1.1rem;">Capabilities</p>
-    <p>Sonus — real-time speech synthesis, video dubbing up to 10 hours<br>
-    Courbet — image generation and editing<br>
-    Linguis / Translator — translations without external APIs<br>
-    Hunter — downloading data from designated sources<br>
-    Discovery — searching for new sources by keywords<br>
-    Aggregator — merging and deduplicating content from multiple sources<br>
-    Redactor — writing and editing articles<br>
-    Syntaktis — grammar correction and language analysis<br>
-    Nexus — module integration and flow orchestration<br>
-    Vara / Resik / Cleaner — data processing, searching and cleaning</p>
-    <p style="margin-top:20px; color:var(--fg); font-family:'Cormorant Garamond',serif; font-size:1.1rem;">How It Works</p>
-    <p>S.A.R.A.H. runs entirely on your device with no cloud data transfer. It operates automatically in the background, adapting to your hardware for total privacy.</p>
-    <p style="margin-top:20px; color:var(--fg); font-family:'Cormorant Garamond',serif; font-size:1.1rem;">System Requirements</p>
-    <p>On-Device: Minimum i7 2.4GHz, 16GB RAM, and 8GB VRAM.</p>
-    <p style="margin-top:8px;">Alternative: Download the self-hosted server version to offload processing.</p>
+<!-- DEPLOYMENT SCENARIOS (Autonomous Business Agents) -->
+<section class="hero" id="scenarios" style="min-height:50vh;">
+  <div class="hero-content reveal">
+    <span class="label" data-i18n="scen_label">Autonomous Business Agents</span>
+    <h1 data-i18n="scen_title">They <span>Listen</span>. They <span>Understand</span>.<br>They <span>Do</span>.</h1>
+    <p data-i18n="scen_sub">S.A.R.A.H. agents hear your conversations, analyze intent in real time, and automatically execute the entire back-office workflow — across healthcare, real estate, retail, hospitality, and beyond.</p>
   </div>
 </section>
 
-
-
-<!-- TECH STACK -->
-<section class="section section-alt">
-  <div class="section-header">
-    <span class="label">Technology</span>
-    <h2>Our <span>Tech Stack</span></h2>
-  </div>
-  <div class="cards" style="max-width:900px;">
-    <div class="card">
-      <div class="card-icon">&#127760;</div>
-      <h3>LLM Engine</h3>
-      <p>Self-hosted large language models with retrieval-augmented generation. Local inference, no API dependency, full data privacy.</p>
+<!-- INTERACTIVE FUNCTION CONFIGURATOR CTA -->
+<section class="section section-alt" id="configurator">
+  <div class="section-header reveal">
+    <span class="label" data-i18n="conf_label">Interactive Configurator</span>
+    <h2 data-i18n="conf_title">Build Your <span>Bespoke AI</span></h2>
+    <p class="lead" data-i18n="conf_lead">Tell us about your business. S.A.R.A.H. recommends the perfect plugin stack — then explore every function in detail.</p>
+    <div class="cta-row" style="margin-top:40px;">
+      <a href="configurator.html" class="btn-primary" data-i18n="cta_configure">Start Configuration</a>
     </div>
-    <div class="card">
-      <div class="card-icon">&#128226;</div>
-      <h3>Voice Pipeline</h3>
-      <p>Real-time speech-to-text with speaker diarization, noise filtering, and multi-language support. Works on-premise with zero cloud round-trips.</p>
-    </div>
-    <div class="card">
-      <div class="card-icon">&#128451;</div>
-      <h3>Vector Store</h3>
-      <p>High-performance vector database for semantic search across documents, transcripts, and agent memory. Sub-50ms query latency.</p>
-    </div>
-    <div class="card">
-      <div class="card-icon">&#9881;</div>
-      <h3>Agent Orchestrator</h3>
-      <p>Distributed task queue with priority scheduling, retry logic, and cross-agent communication. Handles thousands of concurrent workflows.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
-     CUSTOM AGENTS
-============================================================ -->
-<section class="hero" id="agents" style="min-height:50vh;">
-  <div class="hero-content">
-    <span class="label">Autonomous Business Agents</span>
-    <h1>They <span>Listen</span>. They <span>Understand</span>.<br>They <span>Do</span>.</h1>
-    <p>S.A.R.A.H. agents hear your conversations, analyze intent in real time, and automatically execute the entire back-office workflow.</p>
   </div>
 </section>
 
 <!-- CASE STUDIES -->
-<section class="section section-alt">
-  <div class="section-header">
-    <span class="label">Case Studies</span>
-    <h2>Agents in <span>Action</span></h2>
-    <p class="lead">Real-world scenarios where S.A.R.A.H. agents replace manual data entry and streamline operations.</p>
+<section class="section" id="cases">
+  <div class="section-header reveal">
+    <span class="label" data-i18n="cases_label">Agents in Action</span>
+    <h2 data-i18n="cases_title">Case <span>Studies</span></h2>
+    <p class="lead" data-i18n="cases_lead">Real-world scenarios where S.A.R.A.H. agents replace manual data entry and streamline operations.</p>
   </div>
-  <div class="cs-grid">
+  <div class="cs-grid reveal">
 
     <div class="cs-card">
       <div class="cs-header">
@@ -514,7 +915,7 @@ button[type="submit"]:hover { opacity:.85; }
           <span class="cs-tag">Private Practice</span>
         </div>
       </div>
-      <div class="cs-desc">The doctor examines the patient, speaks naturally, occasionally points to the X-ray monitor. The agent icon shows processing status. The agent processes everything in real time in "shadow instances".</div>
+      <div class="cs-desc">The doctor examines the patient, speaks naturally, occasionally points to the X-ray monitor. The agent processes everything in real time in "shadow instances".</div>
       <div class="cs-actions">
         <h4>Agent Actions:</h4>
         <ul>
@@ -667,143 +1068,91 @@ button[type="submit"]:hover { opacity:.85; }
   </div>
 </section>
 
-<!-- S.A.R.A.H. AI ORCHESTRATOR -->
-<section class="section section-alt">
-  <div class="section-header">
-    <span class="label">AI Orchestrator</span>
-    <h2>Meet <span>S.A.R.A.H.</span> – Your Ultimate AI Orchestrator</h2>
-    <p class="lead">A powerful AI engine that orchestrates every agent from our custom plugin ecosystem into seamless, on-demand workflows.</p>
+<!-- SECURITY -->
+<section class="section section-alt" id="security">
+  <div class="section-header reveal">
+    <span class="label" data-i18n="sec_label">Security</span>
+    <h2 data-i18n="sec_title">Secure <span>Forever</span></h2>
+    <p class="lead" data-i18n="sec_lead">Your data never leaves your computer. The agent runs locally, without cloud, without internet connection. It cannot be eavesdropped on.</p>
   </div>
-  <div class="mission-box">
-    <p>S.A.R.A.H. is designed to completely orchestrate any agent from our custom plugin ecosystem. From <strong>mailing, scraping, and copywriting</strong> to <strong>image generation, translation, TTS, and video dubbing</strong>, S.A.R.A.H. seamlessly combines them into functional, on-demand workflows and pipelines tailored to your needs.</p>
-    <p>Available via a monthly subscription, it can run securely on our servers or fully <strong class="highlight">locally and offline</strong> on your machine. Because we programmed every single agent from scratch, they use <strong>zero external APIs</strong> — ensuring your sensitive data never leaves your computer unless you choose to share it.</p>
-  </div>
-  <div class="cards" style="max-width:900px; margin-top:48px;">
-    <div class="card" style="text-align:center;">
-      <div class="card-icon">&#129302;</div>
-      <h3>Modular Plugin Ecosystem</h3>
-      <p>Mailing, scraping, copywriting, image generation, translation, TTS, video dubbing — all connected and orchestrated.</p>
+  <div class="cards reveal">
+    <div class="card">
+      <div class="card-icon">&#128272;</div>
+      <h3>End-to-End Encryption</h3>
+      <p data-i18n="sec_enc">The agent cannot be eavesdropped on because it has no online access. All data stays on your device. No transmission over the internet, no leaks.</p>
     </div>
-    <div class="card" style="text-align:center;">
-      <div class="card-icon">&#9889;</div>
-      <h3>On-Demand Workflows</h3>
-      <p>Combine any agents into functional pipelines tailored exactly to your needs. No coding required.</p>
+    <div class="card">
+      <div class="card-icon">&#127968;</div>
+      <h3>Local Deployment</h3>
+      <p data-i18n="sec_local">The agent runs directly on your computers, not on foreign servers. Full control over hardware, data, and infrastructure. No vendor lock-in.</p>
     </div>
-    <div class="card" style="text-align:center;">
-      <div class="card-icon">&#128274;</div>
-      <h3>Zero External APIs</h3>
-      <p>Every agent programmed from scratch. Your data never leaves your machine unless you choose.</p>
-    </div>
-  </div>
-</section>
-
-<!-- PORTFOLIO WORKFLOW -->
-<section class="section">
-  <div class="section-header">
-    <span class="label">Portfolio Workflow</span>
-    <h2>From Conversation to <span>Complete Delivery</span></h2>
-    <p class="lead">The agent doesn't just listen &mdash; it executes. Invoices, delivery scheduling, accounting updates, stock cards, payment reminders, follow-up calls.</p>
-  </div>
-  <div class="cards" style="max-width:900px;">
-    <div class="card" style="text-align:center;">
+    <div class="card">
       <div class="card-icon">&#128203;</div>
-      <h3>Portfolio Matching</h3>
-      <p>Automatically generates professional presentations from your portfolio based on extracted customer needs. 80%+ match accuracy.</p>
+      <h3>GDPR Compliance</h3>
+      <p data-i18n="sec_gdpr">Full EU GDPR compliance. Data minimization, right to erasure, consent management — all built directly into the agent without external services.</p>
     </div>
-    <div class="card" style="text-align:center;">
-      <div class="card-icon">&#128196;</div>
-      <h3>Document Automation</h3>
-      <p>Invoices, offers, contracts, and reports generated and sent automatically. Accounting sync included.</p>
+    <div class="card">
+      <div class="card-icon">&#128737;</div>
+      <h3>Air-Gapped Mode</h3>
+      <p data-i18n="sec_air">For highly sensitive environments, we offer fully offline operation without any network connectivity. Local LLM, local database, zero outbound traffic.</p>
     </div>
-    <div class="card" style="text-align:center;">
-      <div class="card-icon">&#128260;</div>
-      <h3>Full Lifecycle</h3>
-      <p>Payment reminders, delivery confirmation calls, customer satisfaction checks, stock updates &mdash; all hands-free.</p>
+    <div class="card">
+      <div class="card-icon">&#128202;</div>
+      <h3>Audit Logs</h3>
+      <p data-i18n="sec_audit">Every agent decision is recorded and traceable. Complete traceability from voice input to system action. SOC 2 ready.</p>
     </div>
-  </div>
-  <div style="max-width:900px; margin:40px auto 0;">
-    <div class="workflow">
-      <div class="step">
-        <div class="step-num">&#128222;</div>
-        <h4>Hear</h4>
-        <p>Call / SMS / Mail</p>
-      </div>
-      <div class="step">
-        <div class="step-num">&#129504;</div>
-        <h4>Analyze</h4>
-        <p>Intent &amp; Entities</p>
-      </div>
-      <div class="step">
-        <div class="step-num">&#9889;</div>
-        <h4>Execute</h4>
-        <p>Invoice &middot; Stock &middot; Mail</p>
-      </div>
+    <div class="card">
+      <div class="card-icon">&#128273;</div>
+      <h3>Access Control</h3>
+      <p data-i18n="sec_access">Role-based access control (RBAC) with SSO integration. Multi-factor authentication for the agent administration interface.</p>
     </div>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
+<!-- DATA PROMISE -->
 <section class="section">
-  <div class="section-header">
-    <span class="label">How It Works</span>
-    <h2>Three Steps to <span>Autonomy</span></h2>
+  <div class="section-header reveal">
+    <span class="label" data-i18n="pledge_label">Data &amp; Technology</span>
+    <h2 data-i18n="pledge_title">Our Data &amp; <span>Technology Pledge</span></h2>
   </div>
-  <div class="workflow" style="max-width:700px;">
-    <div class="step">
-      <div class="step-num">01</div>
-      <h4>Connect</h4>
-      <p>Plug the agent into your phone system, email, SMS, and existing software stack. One integration, all channels covered.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">02</div>
-      <h4>Configure</h4>
-      <p>Teach the agent your workflows using natural language. No coding required. Define triggers, actions, and escalation rules.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">03</div>
-      <h4>Deploy</h4>
-      <p>The agent goes live, listens 24/7, and executes tasks automatically. You monitor, refine, and scale across your organization.</p>
-    </div>
+  <div class="mission-box reveal">
+    <p style="margin-top:20px; color:var(--fg); font-family:'Cormorant Garamond',serif; font-size:1.1rem;" data-i18n="pledge_sov_title">Absolute Data Sovereignty</p>
+    <p data-i18n="pledge_sov">We don't train models on your data. Your conversations, patient and customer names, and internal processes remain exclusively yours. Our systems are fine-tuned only on publicly available data. Your confidential information never leaves your local disk and is never used to improve global systems.</p>
+    <p style="margin-top:20px; color:var(--fg); font-family:'Cormorant Garamond',serif; font-size:1.1rem;" data-i18n="pledge_ip_title">Protected IP &amp; Licensing</p>
+    <p data-i18n="pledge_ip">Agent logic and unique code are our intellectual property. As part of the implementation fee, we grant you an exclusive license to use this system. While the data and work results belong to you, the agent core (its "brain" and integrations) remains protected by our copyrights. This model allows us to guarantee continuous optimization, security, and updates within your monthly service plan.</p>
+    <p style="margin-top:20px; color:var(--fg); font-family:'Cormorant Garamond',serif; font-size:1.1rem;" data-i18n="pledge_zero_title">Zero-Footprint Guarantee</p>
+    <p data-i18n="pledge_zero">30-day deletion protocol. In case of contract termination, all local data and temporary configurations are securely deleted within 30 days. Upon request, we issue official confirmation of certified data destruction in compliance with the strictest security standards.</p>
   </div>
 </section>
 
-<!-- ============================================================
-     CONTACT & SECURITY
-============================================================ -->
-<section class="hero" id="contact" style="min-height:50vh;">
-  <div class="hero-content">
-    <span class="label">Get in Touch</span>
-    <h1><span>Contact</span> &amp; <span>Security</span></h1>
-    <p>Reach out to discuss your agent deployment. Every conversation is encrypted, every deployment is secure by design.</p>
+<!-- CONTACT -->
+<section class="section section-alt" id="contact">
+  <div class="section-header reveal">
+    <span class="label" data-i18n="contact_label">Get in Touch</span>
+    <h2 data-i18n="contact_title">Ready to Deploy an <span>Agent Team</span>?</h2>
   </div>
-</section>
-
-<!-- CONTACT FORM -->
-<section class="section section-alt">
-  <div class="section-header">
-    <span class="label">Contact</span>
-    <h2>Ready to Deploy an <span>Agent Team</span>?</h2>
-  </div>
-  <div style="max-width:900px; margin:0 auto; display:grid; grid-template-columns:1fr 1.5fr; gap:48px;">
+  <div style="max-width:900px; margin:0 auto; display:grid; grid-template-columns:1fr 1.5fr; gap:48px;" class="reveal">
     <div>
       <div class="contact-row">
         <div class="contact-icon">&#9993;</div>
         <div>
           <div class="label-small">Email</div>
-          <div class="value">hello@sarah.ai</div>
+          <div class="value">sales@ai-atelier.cloud</div>
+          <div class="value" style="margin-top:4px;">servis@ai-atelier.cloud</div>
         </div>
       </div>
       <div class="contact-row">
         <div class="contact-icon">&#128205;</div>
         <div>
-          <div class="label-small">Location</div>
+          <div class="label-small">📍 Location</div>
           <div class="value">Prague, Czech Republic</div>
+          <div class="value" style="margin-top:4px;">Bekasi, Indonesia</div>
         </div>
       </div>
       <div class="contact-row">
         <div class="contact-icon">&#9889;</div>
         <div>
-          <div class="label-small">Response Time</div>
+          <div class="label-small">⚡ Response Time</div>
           <div class="value">Within 24 hours</div>
         </div>
       </div>
@@ -834,91 +1183,608 @@ button[type="submit"]:hover { opacity:.85; }
   </div>
 </section>
 
-<!-- SECURITY -->
-<section class="section" id="security">
-  <div class="section-header">
-    <span class="label">Security</span>
-    <h2>Secure <span>Forever</span></h2>
-    <p class="lead">Your data never leaves your computer. The agent runs locally, without cloud, without internet connection. It cannot be eavesdropped on.</p>
-  </div>
-  <div class="cards">
-    <div class="card">
-      <div class="card-icon">&#128272;</div>
-      <h3>End-to-End Encryption</h3>
-      <p>The agent cannot be eavesdropped on because it has no online access. All data stays on your device. No transmission over the internet, no leaks.</p>
-    </div>
-    <div class="card">
-      <div class="card-icon">&#127968;</div>
-      <h3>Local Deployment</h3>
-      <p>The agent runs directly on your computers, not on foreign servers. Full control over hardware, data, and infrastructure. No vendor lock-in.</p>
-    </div>
-    <div class="card">
-      <div class="card-icon">&#128203;</div>
-      <h3>GDPR Compliance</h3>
-      <p>Full EU GDPR compliance. Data minimization, right to erasure, consent management — all built directly into the agent without external services.</p>
-    </div>
-    <div class="card">
-      <div class="card-icon">&#128737;</div>
-      <h3>Air-Gapped Mode</h3>
-      <p>For highly sensitive environments, we offer fully offline operation without any network connectivity. Local LLM, local database, zero outbound traffic.</p>
-    </div>
-    <div class="card">
-      <div class="card-icon">&#128202;</div>
-      <h3>Audit Logs</h3>
-      <p>Every agent decision is recorded and traceable. Complete traceability from voice input to system action. SOC 2 ready.</p>
-    </div>
-    <div class="card">
-      <div class="card-icon">&#128273;</div>
-      <h3>Access Control</h3>
-      <p>Role-based access control (RBAC) with SSO integration. Multi-factor authentication for the agent administration interface.</p>
-    </div>
-  </div>
-</section>
-
-<!-- DATA PROMISE -->
-<section class="section section-alt">
-  <div class="section-header">
-    <span class="label">Data &amp; Technology</span>
-    <h2>Our Data &amp; <span>Technology Pledge</span></h2>
-  </div>
-  <div class="mission-box">
-    <p style="margin-top:20px; color:var(--fg); font-family:'Cormorant Garamond',serif; font-size:1.1rem;">Absolute Data Sovereignty</p>
-    <p>We don't train models on your data. Your conversations, patient and customer names, and internal processes remain exclusively yours. Our systems are fine-tuned only on publicly available data. Your confidential information never leaves your local disk and is never used to improve global systems.</p>
-    <p style="margin-top:20px; color:var(--fg); font-family:'Cormorant Garamond',serif; font-size:1.1rem;">Protected IP &amp; Licensing</p>
-    <p>Agent logic and unique code are our intellectual property. As part of the implementation fee, we grant you an exclusive license to use this system. While the data and work results belong to you, the agent core (its "brain" and integrations) remains protected by our copyrights. This model allows us to guarantee continuous optimization, security, and updates within your monthly service plan.</p>
-    <p style="margin-top:20px; color:var(--fg); font-family:'Cormorant Garamond',serif; font-size:1.1rem;">Zero-Footprint Guarantee</p>
-    <p>30-day deletion protocol. In case of contract termination, all local data and temporary configurations are securely deleted within 30 days. Upon request, we issue official confirmation of certified data destruction in compliance with the strictest security standards.</p>
-  </div>
-</section>
-
 <!-- FOOTER -->
 <div class="footer">
   The AtelIer &mdash; Offline AI &mdash; Kutná Hora – Czech Republic, Bekasi – Republic of Indonesia, München – Germany
 </div>
 
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <h3 data-i18n="modal_thanks">Configuration Sent</h3>
+    <p data-i18n="modal_body">Your configuration has been sent. We will contact you within 24 hours with a detailed proposal, including onboarding schedule and complimentary training.</p>
+    <button class="btn-ghost" onclick="document.getElementById('modalOverlay').classList.remove('open')" data-i18n="modal_close">Close</button>
+  </div>
+</div>
+
 <script>
-// Smooth scroll offset for fixed nav
+/* ═══════════════════════════════════════════════════════════
+   I18N — 35 Languages (EN default, CS complete, rest fallback)
+   ═══════════════════════════════════════════════════════════ */
+const languages = [
+  {code:'en', name:'English'},
+  {code:'cs', name:'Čeština'},
+  {code:'zh', name:'中文'},
+  {code:'es', name:'Español'},
+  {code:'fr', name:'Français'},
+  {code:'de', name:'Deutsch'},
+  {code:'ru', name:'Русский'},
+  {code:'pt', name:'Português'},
+  {code:'it', name:'Italiano'},
+  {code:'nl', name:'Nederlands'},
+  {code:'pl', name:'Polski'},
+  {code:'tr', name:'Türkçe'},
+  {code:'ar', name:'العربية'},
+  {code:'ja', name:'日本語'},
+  {code:'ko', name:'한국어'},
+  {code:'vi', name:'Tiếng Việt'},
+  {code:'hi', name:'हिन्दी'},
+  {code:'id', name:'Bahasa Indonesia'},
+  {code:'th', name:'ไทย'},
+  {code:'el', name:'Ελληνικά'},
+  {code:'sv', name:'Svenska'},
+  {code:'hu', name:'Magyar'},
+  {code:'ro', name:'Română'},
+  {code:'da', name:'Dansk'},
+  {code:'fi', name:'Suomi'},
+  {code:'no', name:'Norsk'},
+  {code:'he', name:'עברית'},
+  {code:'uk', name:'Українська'},
+  {code:'ms', name:'Melayu'},
+  {code:'hr', name:'Hrvatski'},
+  {code:'sk', name:'Slovenčina'},
+  {code:'bg', name:'Български'},
+  {code:'sr', name:'Srpski'},
+  {code:'lt', name:'Lietuvių'},
+  {code:'lv', name:'Latviešu'}
+];
+
+const translations = {
+  en: {
+    nav_spec:'Spec', nav_workforce:'AI Workforce', nav_human:'Team', nav_config:'Configurator', nav_cases:'Cases', nav_security:'Security', nav_contact:'Contact', nav_home:'HOME',
+    hero_label:'Bespoke Offline AI Orchestration', hero_title:'Configure Your <span>S.A.R.A.H.</span>', hero_sub:'No cloud. No APIs. No data leaks. A modular AI platform that runs entirely on your hardware — tailored to your operations, not the other way around.', hero_tagline:'We build AI that listens, understands, and acts — so humans can focus on what matters.',
+    ticker_loc:'1M+', ticker_loc_label:'Lines of Logic', ticker_vram:'8GB', ticker_vram_label:'VRAM Minimum', ticker_lat:'<50ms', ticker_lat_label:'Latency', ticker_mode:'Air-Gapped', ticker_mode_label:'Operation',
+    cta_configure:'Start Configuration', cta_cases:'See It in Action',
+    spec_label:'The Core', spec_title:'S.A.R.A.H. <span>Specifications</span>', spec_lead:'Engineered for total data sovereignty. Optimized for local inference on consumer-grade hardware.',
+    spec_loc:'Lines of Proprietary Logic', spec_sys:'System Footprint', spec_cpu:'Minimum CPU', spec_ram:'System RAM', spec_vram:'VRAM Required', spec_lat:'Query Latency', spec_api:'External APIs', spec_offline:'Offline Capable',
+    spec_desc1:'S.A.R.A.H. is a modular AI platform running directly on your computer. It speaks, draws, translates, writes articles and manages content — all without cloud, without telemetry, with full control over your data.',
+    spec_caps_title:'Core Capabilities', spec_caps:'Sonus — real-time speech synthesis, video dubbing up to 10 hours<br>Courbet — image generation and editing<br>Linguis / Translator — translations without external APIs<br>Hunter — downloading data from designated sources<br>Discovery — searching for new sources by keywords<br>Aggregator — merging and deduplicating content from multiple sources<br>Redactor — writing and editing articles<br>Syntaktis — grammar correction and language analysis<br>Nexus — module integration and flow orchestration<br>Vara / Resik / Cleaner — data processing, searching and cleaning',
+    spec_req_title:'System Requirements', spec_req:'On-Device: Minimum i7 2.4GHz, 16GB RAM, and 8GB VRAM.<br>Alternative: Download the self-hosted server version to offload processing.',
+    wf_label:'Our AI Workforce', wf_title:'The <span>Engine</span> Behind S.A.R.A.H.', wf_lead:'These autonomous AI agents power our internal development, research, and quality assurance — ensuring every module of S.A.R.A.H. is built with surgical precision.',
+    wf_dev:'Autonomous coding agent capable of understanding requirements, designing architecture, writing production-grade code, reviewing PRs, and maintaining legacy systems.',
+    wf_ds:'End-to-end data science agent that cleans datasets, engineers features, trains models, evaluates performance, and deploys to production with interpretable reports.',
+    wf_sec:'24/7 security operations agent that monitors logs, audits code for vulnerabilities, manages compliance checks, and responds to threats in real-time.',
+    wf_devops:'Infrastructure automation agent that manages CI/CD pipelines, optimizes cloud costs, auto-scales services, and ensures high availability with self-healing capabilities.',
+    wf_ux:'Creative agent that generates UI components, creates design systems, runs usability heuristics, and produces accessibility-compliant markup. Iterates on designs based on user analytics.',
+    wf_qa:'Comprehensive testing agent that writes unit, integration, and E2E tests. Detects regressions, generates test data, and validates UI across devices and browsers.',
+    wf_int:'Specialist in connecting legacy systems and visual automation (Hardware Injection). Bridges the gap between old infrastructure and modern AI workflows without disrupting existing operations.',
+    human_label:'Leadership', human_title:'The <span>Human Core</span>', human_lead:'Strategy, oversight, and creative direction of the AI ecosystem.',
+    human_michal:'Architect of systemic logic and product visionary. Michal designs how AI agents interpret reality and invisibly integrate modern intelligence into legacy systems. His goal is a world where people don\'t have to work with computers, but with people.',
+    human_umar:'Umar monitors the performance and optimization of the entire AI workforce. He ensures that agents operate with maximum efficiency and lightning-fast response times. He fine-tunes their mutual communication and ensures every "hardware injection" is executed with surgical precision.',
+    human_rin:'Rin is the guardian of integrity and security. She programs agents with a focus on encryption and absolute data protection. Thanks to her algorithms, the system operates in a zero-footprint mode, guaranteeing that sensitive information remains secure.',
+    human_ext:'We collaborate with a vetted network of external developers and specialists. This flexibility allows us to rapidly scale capacity and deploy experts in specific technologies tailored to the unique needs of each project.',
+    scen_label:'Autonomous Business Agents', scen_title:'They <span>Listen</span>. They <span>Understand</span>.<br>They <span>Do</span>.', scen_sub:'S.A.R.A.H. agents hear your conversations, analyze intent in real time, and automatically execute the entire back-office workflow — across healthcare, real estate, retail, hospitality, and beyond.',
+    conf_label:'Interactive Configurator', conf_title:'Build Your <span>Bespoke AI</span>', conf_lead:'Select the capabilities your business needs. S.A.R.A.H. assembles the exact plugin stack — no more, no less. Price updates in real time.',
+    summary_title:'Configuration Summary', summary_total:'Estimated Monthly Investment', summary_note:'Pricing is indicative. Final quote depends on deployment model, hardware profile, and integration complexity.', summary_cta:'Request This Configuration',
+    cases_label:'Agents in Action', cases_title:'Case <span>Studies</span>', cases_lead:'Real-world scenarios where S.A.R.A.H. agents replace manual data entry and streamline operations.',
+    sec_label:'Security', sec_title:'Secure <span>Forever</span>', sec_lead:'Your data never leaves your computer. The agent runs locally, without cloud, without internet connection. It cannot be eavesdropped on.',
+    sec_enc:'The agent cannot be eavesdropped on because it has no online access. All data stays on your device. No transmission over the internet, no leaks.',
+    sec_local:'The agent runs directly on your computers, not on foreign servers. Full control over hardware, data, and infrastructure. No vendor lock-in.',
+    sec_gdpr:'Full EU GDPR compliance. Data minimization, right to erasure, consent management — all built directly into the agent without external services.',
+    sec_air:'For highly sensitive environments, we offer fully offline operation without any network connectivity. Local LLM, local database, zero outbound traffic.',
+    sec_audit:'Every agent decision is recorded and traceable. Complete traceability from voice input to system action. SOC 2 ready.',
+    sec_access:'Role-based access control (RBAC) with SSO integration. Multi-factor authentication for the agent administration interface.',
+    pledge_label:'Data & Technology', pledge_title:'Our Data & <span>Technology Pledge</span>',
+    pledge_sov_title:'Absolute Data Sovereignty', pledge_sov:'We don\'t train models on your data. Your conversations, patient and customer names, and internal processes remain exclusively yours. Our systems are fine-tuned only on publicly available data. Your confidential information never leaves your local disk and is never used to improve global systems.',
+    pledge_ip_title:'Protected IP & Licensing', pledge_ip:'Agent logic and unique code are our intellectual property. As part of the implementation fee, we grant you an exclusive license to use this system. While the data and work results belong to you, the agent core (its "brain" and integrations) remains protected by our copyrights. This model allows us to guarantee continuous optimization, security, and updates within your monthly service plan.',
+    pledge_zero_title:'Zero-Footprint Guarantee', pledge_zero:'30-day deletion protocol. In case of contract termination, all local data and temporary configurations are securely deleted within 30 days. Upon request, we issue official confirmation of certified data destruction in compliance with the strictest security standards.',
+    contact_label:'Get in Touch', contact_title:'Ready to Deploy an <span>Agent Team</span>?',
+    modal_thanks:'Configuration Sent', modal_body:'Your configuration has been sent. We will contact you within 24 hours with a detailed proposal, including onboarding schedule and complimentary training.', modal_close:'Close',
+    cat_creation:'Creation & Media', cat_content:'Content Operations', cat_business:'Business Operations',
+    included:'included',
+    wz_industry:'What industry are you in?', wz_pain:'What are your biggest pain points?', wz_integ:'Which systems do you use?', wz_scale:'What is your scale?', btn_next:'Next', btn_back:'Back', btn_recommend:'Show Recommendations', pkg_title:'Recommended for You', pkg_sub:'Based on your answers, here are three configurations. Expand any card to explore every function.', btn_expert:'Fine-Tune Manually (Expert Mode)', expert_title:'Manual Function Selector', expert_sub:'Toggle individual functions to build a fully custom configuration.'
+  },
+  cs: {
+    nav_spec:'Specifikace', nav_workforce:'AI Tým', nav_human:'Tým', nav_config:'Konfigurátor', nav_cases:'Případy', nav_security:'Bezpečnost', nav_contact:'Kontakt', nav_home:'DOMŮ',
+    hero_label:'Bespoke Offline AI Orchestrace', hero_title:'Konfigurujte svou <span>S.A.R.A.H.</span>', hero_sub:'Bez cloudu. Bez API. Bez úniku dat. Modulární AI platforma běžící přímo na vašem hardwaru — šitá na míru vašim operacím.',
+    hero_tagline:'Stavíme AI, které naslouchá, chápe a jedná — aby se lidé mohli soustředit na to podstatné.',
+    ticker_loc:'1M+', ticker_loc_label:'Řádků logiky', ticker_vram:'8GB', ticker_vram_label:'Minimální VRAM', ticker_lat:'<50ms', ticker_lat_label:'Latence', ticker_mode:'Air-Gapped', ticker_mode_label:'Režim',
+    cta_configure:'Začít konfiguraci', cta_cases:'Uvidět v akci',
+    spec_label:'Jádro', spec_title:'Specifikace <span>S.A.R.A.H.</span>', spec_lead:'Navrženo pro totální suverenitu dat. Optimalizováno pro lokální inferenci na běžném hardwaru.',
+    spec_loc:'Řádků proprietární logiky', spec_sys:'Systémová stopa', spec_cpu:'Minimální CPU', spec_ram:'Systémová RAM', spec_vram:'Požadovaná VRAM', spec_lat:'Latence dotazu', spec_api:'Externích API', spec_offline:'Schopnost offline',
+    spec_desc1:'S.A.R.A.H. je modulární AI platforma běžící přímo na vašem počítači. Mluví, kreslí, překládá, píše články a spravuje obsah — vše bez cloudu, bez telemetrie, s plnou kontrolou nad daty.',
+    spec_caps_title:'Základní schopnosti', spec_caps:'Sonus — real-time syntéza řeči, dabing videí až 10 hodin<br>Courbet — generování a úprava obrázků<br>Linguis / Překladač — překlady bez externích API<br>Hunter — stahování dat z definovaných zdrojů<br>Discovery — vyhledávání nových zdrojů podle klíčových slov<br>Agregátor — slučování a odstraňování duplicit obsahu z více zdrojů<br>Redaktor — psaní a úprava článků<br>Syntaktis — gramatická korekce a jazyková analýza<br>Nexus — integrace modulů a orchestrace toků<br>Vara / Resik / Cleaner — zpracování, vyhledávání a čištění dat',
+    spec_req_title:'Systémové požadavky', spec_req:'Na zařízení: Minimálně i7 2.4GHz, 16GB RAM a 8GB VRAM.<br>Alternativa: Stáhněte si self-hosted serverovou verzi pro odlehčení výpočtů.',
+    wf_label:'Náš AI Tým', wf_title:'<span>Motor</span> za S.A.R.A.H.', wf_lead:'Tyto autonomní AI agenty pohánějí náš interní vývoj, výzkum a zajištění kvality — každý modul S.A.R.A.H. je vytvořen s chirurgickou přesností.',
+    wf_dev:'Autonomní kódovací agent schopný porozumět požadavkům, navrhovat architekturu, psát produkční kód, reviewovat PR a udržovat legacy systémy.',
+    wf_ds:'End-to-end datový vědec, který čistí datasety, vytváří featury, trénuje modely, evaluuje výkonnost a deployuje do produkce s interpretovatelnými reporty.',
+    wf_sec:'24/7 bezpečnostní agent monitorující logy, auditující kód na zranitelnosti, spravující compliance a reagující na hrozby v reálném čase.',
+    wf_devops:'Agent infrastrukturní automatizace spravující CI/CD pipeline, optimalizující cloudové náklady, auto-scalující služby a zajišťující vysokou dostupnost se schopností self-healing.',
+    wf_ux:'Kreativní agent generující UI komponenty, tvořící design systémy, provádějící usability heuristiky a produkující přístupný markup. Iteruje designy na základě analytiky.',
+    wf_qa:'Komplexní testovací agent píšící unit, integrační a E2E testy. Detekuje regrese, generuje testovací data a validuje UI napříč zařízeními a prohlížeči.',
+    wf_int:'Specialista na propojování legacy systémů a vizuální automatizaci (Hardware Injection). Překlenuje propast mezi starou infrastrukturou a moderními AI workflow bez narušení provozu.',
+    human_label:'Vedení', human_title:'<span>Lidské jádro</span>', human_lead:'Strategie, dohled a kreativní vedení AI ekosystému.',
+    human_michal:'Architekt systémové logiky a produktový vizionář. Michal navrhuje, jak agenti interpretují realitu a neviditelně integrují moderní inteligenci do legacy systémů. Jeho cílem je svět, kde lidé nemusí pracovat s počítači, ale s lidmi.',
+    human_umar:'Umar monitoruje výkon a optimalizaci celé AI pracovní síly. Zajišťuje maximální efektivitu a bleskové odezvy. Ladí vzájemnou komunikaci agentů a zajišťuje, že každý "hardware injection" je proveden s chirurgickou přesností.',
+    human_rin:'Rin je strážkyně integrity a bezpečnosti. Programuje agenty s důrazem na šifrování a absolutní ochranu dat. Díky jejím algoritmům systém běží v režimu zero-footprint a citlivé informace zůstávají v bezpečí.',
+    human_ext:'Spolupracujeme s prověřenou sítí externích vývojářů a specialistů. Tato flexibilita nám umožňuje rychle škálovat kapacitu a nasazovat experty v konkrétních technologiích na míru jednotlivým projektům.',
+    scen_label:'Autonomní Byznysoví Agenti', scen_title:'<span>Naslouchají</span>. <span>Chápou</span>.<br><span>Jednají</span>.', scen_sub:'Agenti S.A.R.A.H. slyší vaše konverzace, analyzují záměr v reálném čase a automaticky vykonávají celý back-office workflow — ve zdravotnictví, realitách, maloobchodu, pohostinství i dalších odvětvích.',
+    conf_label:'Interaktivní konfigurátor', conf_title:'Sestavte si <span>na míru AI</span>', conf_lead:'Vyberte schopnosti, které vaše firma potřebuje. S.A.R.A.H. sestaví přesný stack pluginů — nic víc, nic míň. Cena se aktualizuje v reálném čase.',
+    summary_title:'Shrnutí konfigurace', summary_total:'Odhadovaná měsíční investice', summary_note:'Ceny jsou orientační. Konečná nabídka závisí na modelu nasazení, hardwarovém profilu a složitosti integrace.', summary_cta:'Požádat o tuto konfiguraci',
+    cases_label:'Agenti v akci', cases_title:'Případové <span>Studie</span>', cases_lead:'Reálné scénáře, kde agenti S.A.R.A.H. nahrazují manuální zadávání dat a zefektivňují operace.',
+    sec_label:'Bezpečnost', sec_title:'Bezpečná <span>Navždy</span>', sec_lead:'Vaše data nikdy neopustí váš počítač. Agent běží lokálně, bez cloudu, bez internetu. Nelze ho odposlouchávat.',
+    sec_enc:'Agent nelze odposlouchávat, protože nemá online přístup. Všechna data zůstávají na vašem zařízení. Žádný přenos přes internet, žádné úniky.',
+    sec_local:'Agent běží přímo na vašich počítačích, ne na cizích serverech. Plná kontrola nad hardwarem, daty a infrastrukturou. Žádný vendor lock-in.',
+    sec_gdpr:'Plná shoda s EU GDPR. Minimalizace dat, právo na výmaz, správa souhlasů — vše vestavěno přímo do agenta bez externích služeb.',
+    sec_air:'Pro vysoce citlivá prostředí nabízíme plně offline provoz bez jakékoliv síťové konektivity. Lokální LLM, lokální databáze, nulový odchozí provoz.',
+    sec_audit:'Každé rozhodnutí agenta je zaznamenáno a dohledatelné. Úplná trasovatelnost od hlasového vstupu po systémovou akci. Připraveno na SOC 2.',
+    sec_access:'Řízení přístupu na základě rolí (RBAC) s integrací SSO. Vícefaktorová autentizace pro administrační rozhraní agenta.',
+    pledge_label:'Data a technologie', pledge_title:'Náš závazek <span>dat a technologie</span>',
+    pledge_sov_title:'Absolutní suverenita dat', pledge_sov:'Netrénujeme modely na vašich datech. Vaše konverzace, jména pacientů a zákazníků i interní procesy zůstávají výhradně vaše. Naše systémy jsou fine-tunovány pouze na veřejně dostupných datech. Vaše důvěrné informace nikdy neopustí lokální disk a nejsou použity ke zlepšení globálních systémů.',
+    pledge_ip_title:'Chráněné IP a licence', pledge_ip:'Logika agentů a unikátní kód jsou naše duševní vlastnictví. V rámci implementačního poplatku vám udělujeme exkluzivní licenci k používání tohoto systému. Zatímco data a výsledky práce patří vám, jádro agentů (jeho "mozek" a integrace) zůstává chráněno našimi autorskými právy. Tento model nám umožňuje garantovat kontinuální optimalizaci, bezpečnost a aktualizace v rámci vašeho měsíčního servisního plánu.',
+    pledge_zero_title:'Zero-Footprint záruka', pledge_zero:'30denní protokol mazání. V případě ukončení smlouvy jsou všechna lokální data a dočasné konfigurace bezpečně smazána do 30 dnů. Na vyžádání vydáváme oficiální potvrzení o certifikovaném zničení dat v souladu s nejpřísnějšími bezpečnostními standardy.',
+    contact_label:'Kontakt', contact_title:'Připraveni nasadit <span>tým agentů</span>?',
+    modal_thanks:'Konfigurace odeslána', modal_body:'Vaše konfigurace byla odeslána. Do 24 hodin vás budeme kontaktovat s detailní nabídkou, včetně plánu onboardingu a bezplatného školení.', modal_close:'Zavřít',
+    cat_creation:'Tvorba a média', cat_content:'Obsahové operace', cat_business:'Byznysová automatizace',
+    included:'v ceně',
+    wz_industry:'V jakém odvětví působíte?', wz_pain:'Jaké jsou vaše největší bolesti?', wz_integ:'Jaké systémy používáte?', wz_scale:'Jaký je váš rozsah?', btn_next:'Další', btn_back:'Zpět', btn_recommend:'Zobrazit doporučení', pkg_title:'Doporučeno pro vás', pkg_sub:'Na základě vašich odpovědí zde jsou tři konfigurace. Rozbalte jakoukoli kartu a prozkoumejte každou funkci.', btn_expert:'Doladit ručně (Expertní režim)', expert_title:'Ruční výběr funkcí', expert_sub:'Přepínejte jednotlivé funkce a vytvořte plně vlastní konfiguraci.'
+  }
+};
+
+function setLanguage(code) {
+  const dict = translations[code] || translations.en;
+  document.documentElement.lang = code;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (dict[key] !== undefined) {
+      el.innerHTML = dict[key];
+    } else if (translations.en[key] !== undefined) {
+      el.innerHTML = translations.en[key];
+    }
+  });
+  localStorage.setItem('sarahLang', code);
+}
+
+/* Populate language switcher */
+const langSelect = document.getElementById('langSelect');
+languages.forEach(l => {
+  const opt = document.createElement('option');
+  opt.value = l.code; opt.textContent = l.name;
+  langSelect.appendChild(opt);
+});
+langSelect.addEventListener('change', e => setLanguage(e.target.value));
+const savedLang = localStorage.getItem('sarahLang') || 'en';
+langSelect.value = savedLang;
+
+/* ═══════════════════════════════════════════════════════════
+   CONFIGURATOR DATA — Features map to Plugins
+   ═══════════════════════════════════════════════════════════ */
+const pluginPricing = {
+  core:        { name:'S.A.R.A.H. Core', price:499 },
+  courbet:     { name:'Courbet — Image Gen', price:149 },
+  sonus:       { name:'Sonus — Dubbing', price:199 },
+  avatar:      { name:'Avatar — Video', price:99 },
+  vara:        { name:'Vara — TTS', price:49 },
+  linguis:     { name:'Linguis — Translation', price:49 },
+  discovery:   { name:'Discovery — Sources', price:79 },
+  agregator:   { name:'Aggregator — Content', price:59 },
+  cleaner:     { name:'Cleaner — Refinement', price:39 },
+  redaktor:    { name:'Redactor — Writing', price:69 },
+  syntaktis:   { name:'Syntaktis — SEO/Tone', price:49 },
+  resik:       { name:'Resik — Normalization', price:29 },
+  nexus:       { name:'Nexus — Reporting', price:39 },
+  mailer:      { name:'Postmaster — Email', price:59 },
+  publisher:   { name:'Publisher — Social', price:69 },
+  prekladac:   { name:'Translator — Bulk', price:39 },
+  oom:         { name:'Office Manager Monitor', price:149 },
+  realitak:    { name:'Real Estate Engine', price:89 }
+};
+
+const featureCatalog = [
+  {
+    categoryKey:'cat_creation',
+    items:[
+      {id:'img_gen', name:'AI Image Generation', desc:'Generate photorealistic and artistic images from text — local SDXL/SD1.5 models.', plugin:'courbet', priceLabel:true, tags:['marketing','retail','content-creation','images']},
+      {id:'img_upscale', name:'AI Image Upscaling', desc:'2× resolution boost with Real-ESRGAN post-processing.', plugin:'courbet', priceLabel:false, tags:['marketing','retail','images']},
+      {id:'avatar_video', name:'Avatar Video Generation', desc:'Lip-sync avatar videos from audio and a single reference photo (SadTalker/Wav2Lip).', plugin:'avatar', priceLabel:true, tags:['marketing','retail','content-creation','video']},
+      {id:'tts', name:'Text-to-Speech Engine', desc:'Natural-sounding speech synthesis in 16+ languages with speed & pitch control.', plugin:'vara', priceLabel:true, tags:['healthcare','retail','travel','hospitality','voice-assistant','accessibility']},
+      {id:'video_dub', name:'Video Dubbing & Voice-over', desc:'Automatic translation, dubbing and broadcast audio mastering up to 10 hours.', plugin:'sonus', priceLabel:true, tags:['marketing','content-creation','translations','video']},
+      {id:'audio_master', name:'Broadcast Audio Mastering', desc:'LUFS-normalized output with ambient audio preservation.', plugin:'sonus', priceLabel:false, tags:['marketing','video']}
+    ]
+  },
+  {
+    categoryKey:'cat_content',
+    items:[
+      {id:'source_discovery', name:'Automated Source Discovery', desc:'Monitor RSS feeds, websites and APIs by topic with scheduled scraping.', plugin:'discovery', priceLabel:true, tags:['marketing','content-creation','research']},
+      {id:'content_agg', name:'Content Aggregation & Reporting', desc:'Merge articles from multiple sources, deduplicate and generate LLM summaries.', plugin:'agregator', priceLabel:true, tags:['marketing','content-creation','reports','research']},
+      {id:'smart_clean', name:'Smart Article Cleaning', desc:'Remove URLs, author bylines, technical phrases and ads using LLM reasoning.', plugin:'cleaner', priceLabel:true, tags:['marketing','content-creation']},
+      {id:'article_rewrite', name:'AI Article Rewriting', desc:'Rewrite articles into professional prose with automatic SEO and hashtag generation.', plugin:'redaktor', priceLabel:true, tags:['marketing','content-creation','seo']},
+      {id:'tone_seo', name:'Tone & SEO Optimization', desc:'Adjust tone (professional, casual, storytelling), inject keywords and fix grammar.', plugin:'syntaktis', priceLabel:true, tags:['marketing','content-creation','seo']},
+      {id:'normalize', name:'Content Normalization', desc:'Deduplicate sources, filter spam and normalize formatting across pipelines.', plugin:'resik', priceLabel:true, tags:['marketing','content-creation']},
+      {id:'translation_ctx', name:'Context-aware Translation', desc:'Preserve style, nuance and formatting (Markdown/HTML) across languages.', plugin:'linguis', priceLabel:true, tags:['translations','healthcare','retail','travel','hospitality','legal']},
+      {id:'bulk_translate', name:'Bulk Article Translation', desc:'Translate entire article pipelines with auto language detection and skip logic.', plugin:'prekladac', priceLabel:true, tags:['translations','marketing','content-creation']},
+      {id:'reports', name:'Intelligent Reporting', desc:'Generate bullet-point, detailed or insight-focused reports from any content set.', plugin:'nexus', priceLabel:true, tags:['reports','finance','healthcare','retail','legal']}
+    ]
+  },
+  {
+    categoryKey:'cat_business',
+    items:[
+      {id:'email_agent', name:'Email Agent — Read, Sort, Reply', desc:'IMAP/SMTP automation: fetch, summarize, label and draft AI replies.', plugin:'mailer', priceLabel:true, tags:['emails','healthcare','retail','finance','travel','hospitality','legal','imap']},
+      {id:'publishing', name:'Multi-platform Publishing', desc:'Publish to WordPress, LinkedIn, X/Twitter, Facebook, Instagram, Telegram.', plugin:'publisher', priceLabel:true, tags:['publishing','marketing','social','wordpress']},
+      {id:'doc_intel', name:'Document Intelligence & Client Cards', desc:'Extract metadata from PDF/DOCX/XLSX/TXT and build virtual client cards.', plugin:'oom', priceLabel:true, tags:['documents','healthcare','finance','legal','ocr','client-management']},
+      {id:'biz_alerts', name:'Business Process Risk Alerts', desc:'Detect delays, stalled offers and contract-to-invoice bottlenecks automatically.', plugin:'oom', priceLabel:false, tags:['compliance','finance','healthcare','retail']},
+      {id:'perf_metrics', name:'Employee Performance Metrics', desc:'Anonymized dashboards, scoring and private nudge loops for managers.', plugin:'oom', priceLabel:false, tags:['compliance','finance','healthcare','retail']},
+      {id:'client_screen', name:'Client Screening & Scoring', desc:'Orange-list screening, instant ICO audit and 10/10 life scoring.', plugin:'oom', priceLabel:false, tags:['compliance','finance','legal','client-management']},
+      {id:'real_estate', name:'Real Estate Matching Engine', desc:'Match property portfolios to client requirements and generate PDF presentations instantly.', plugin:'realitak', priceLabel:true, tags:['real-estate','client-management','documents']}
+    ]
+  }
+];
+
+const wizardQuestions = [
+  {
+    step:1, key:'industry',
+    options:[
+      {value:'healthcare', icon:'&#127973;', label:'Healthcare', hint:'Clinics, hospitals, private practice'},
+      {value:'real-estate', icon:'&#127968;', label:'Real Estate', hint:'Agencies, brokers, property management'},
+      {value:'retail', icon:'&#128722;', label:'Retail', hint:'Shops, e-commerce, wholesale'},
+      {value:'travel', icon:'&#9992;', label:'Travel & Hospitality', hint:'Agencies, hotels, restaurants'},
+      {value:'finance', icon:'&#128176;', label:'Finance', hint:'Banks, insurance, accounting'},
+      {value:'legal', icon:'&#9878;', label:'Legal', hint:'Law firms, notaries, compliance'},
+      {value:'marketing', icon:'&#127912;', label:'Marketing & Media', hint:'Agencies, publishers, content studios'},
+      {value:'manufacturing', icon:'&#127981;', label:'Manufacturing', hint:'Factories, supply chain, logistics'},
+      {value:'education', icon:'&#127891;', label:'Education', hint:'Schools, universities, training'},
+      {value:'other', icon:'&#127760;', label:'Other', hint:'Any other industry'}
+    ]
+  },
+  {
+    step:2, key:'pain',
+    multi:true,
+    options:[
+      {value:'manual-data', icon:'&#9997;', label:'Manual Data Entry', hint:'Typing, copying, form filling'},
+      {value:'translations', icon:'&#128483;', label:'Translations', hint:'Multilingual content, localization'},
+      {value:'content-creation', icon:'&#9999;', label:'Content Creation', hint:'Writing articles, social posts, SEO'},
+      {value:'reports', icon:'&#128202;', label:'Reports & Analytics', hint:'Summaries, dashboards, insights'},
+      {value:'emails', icon:'&#9993;', label:'Email Overload', hint:'Sorting, replying, organizing inbox'},
+      {value:'inventory', icon:'&#128230;', label:'Inventory & Stock', hint:'Tracking, ordering, alerts'},
+      {value:'voice-assistant', icon:'&#127908;', label:'Voice Assistance', hint:'Speech, dubbing, TTS, call handling'},
+      {value:'publishing', icon:'&#128240;', label:'Publishing', hint:'Multi-platform posting, scheduling'},
+      {value:'client-management', icon:'&#128101;', label:'Client Management', hint:'CRM, client cards, screening'},
+      {value:'compliance', icon:'&#128272;', label:'Compliance & Audit', hint:'GDPR, risk alerts, documentation'}
+    ]
+  },
+  {
+    step:3, key:'integ',
+    multi:true,
+    options:[
+      {value:'wordpress', icon:'&#128187;', label:'WordPress', hint:'Website CMS'},
+      {value:'sap', icon:'&#128295;', label:'SAP / ERP', hint:'Enterprise resource planning'},
+      {value:'salesforce', icon:'&#9733;', label:'Salesforce', hint:'CRM platform'},
+      {value:'imap', icon:'&#9993;', label:'Email (IMAP/SMTP)', hint:'Gmail, Outlook, custom'},
+      {value:'accounting', icon:'&#128176;', label:'Accounting Software', hint:'QuickBooks, Xero, local'},
+      {value:'pos', icon:'&#128179;', label:'POS System', hint:'Point of sale, checkout'},
+      {value:'pms', icon:'&#127976;', label:'Property Management', hint:'Hotel PMS, booking systems'},
+      {value:'none', icon:'&#10067;', label:'None / Not Sure', hint:'We will advise'}
+    ]
+  },
+  {
+    step:4, key:'scale',
+    options:[
+      {value:'small', icon:'&#127941;', label:'Small', hint:'1–10 employees, 1 location'},
+      {value:'medium', icon:'&#127942;', label:'Medium', hint:'11–50 employees, 2–5 locations'},
+      {value:'large', icon:'&#127943;', label:'Large', hint:'51–200 employees, multiple branches'},
+      {value:'enterprise', icon:'&#127894;', label:'Enterprise', hint:'200+ employees, global scale'}
+    ]
+  }
+];
+
+const selectedFeatures = new Set();
+const wizardAnswers = { step1:'', step2:[], step3:[], step4:'' };
+let currentWizardStep = 1;
+let generatedPackages = null;
+let expertMode = false;
+let activePackagePlugins = new Set();
+
+function renderWizard() {
+  const t = translations[document.documentElement.lang] || translations.en;
+  wizardQuestions.forEach(q => {
+    const grid = document.getElementById('wgrid' + q.step);
+    if (!grid) return;
+    grid.innerHTML = '';
+    q.options.forEach(opt => {
+      const isSelected = q.multi
+        ? wizardAnswers['step'+q.step].includes(opt.value)
+        : wizardAnswers['step'+q.step] === opt.value;
+      const card = document.createElement('div');
+      card.className = 'wizard-card ' + (isSelected ? 'selected' : '');
+      card.innerHTML = `<div class="wc-icon">${opt.icon}</div><div class="wc-label">${opt.label}</div><div class="wc-hint">${opt.hint}</div>`;
+      card.onclick = () => {
+        if (q.multi) {
+          const arr = wizardAnswers['step'+q.step];
+          const idx = arr.indexOf(opt.value);
+          if (idx > -1) arr.splice(idx, 1); else arr.push(opt.value);
+        } else {
+          wizardAnswers['step'+q.step] = opt.value;
+        }
+        renderWizard();
+      };
+      grid.appendChild(card);
+    });
+  });
+
+  // Progress dots
+  for (let i = 1; i <= 4; i++) {
+    const dot = document.getElementById('wp' + i);
+    const line = document.getElementById('wl' + i);
+    if (!dot) continue;
+    dot.className = 'wp-dot' + (i < currentWizardStep ? ' done' : '') + (i === currentWizardStep ? ' current' : '');
+    if (line) line.className = 'wp-line' + (i < currentWizardStep ? ' done' : '');
+  }
+
+  // Show active step
+  document.querySelectorAll('.wizard-step').forEach(s => {
+    s.classList.toggle('active', parseInt(s.dataset.step) === currentWizardStep);
+  });
+}
+
+function nextStep(n) {
+  currentWizardStep = n;
+  renderWizard();
+}
+function prevStep(n) {
+  currentWizardStep = n;
+  renderWizard();
+}
+
+function buildPackages() {
+  const targetTags = new Set();
+  targetTags.add(wizardAnswers.step1);
+  wizardAnswers.step2.forEach(t => targetTags.add(t));
+  wizardAnswers.step3.forEach(t => targetTags.add(t));
+  if (wizardAnswers.step4 === 'enterprise') { targetTags.add('scale-enterprise'); }
+  else if (wizardAnswers.step4 === 'large') { targetTags.add('scale-large'); }
+
+  // Score each plugin by how many of its functions match target tags
+  const pluginScores = {};
+  Object.keys(pluginPricing).forEach(pid => { if (pid !== 'core') pluginScores[pid] = 0; });
+
+  featureCatalog.forEach(cat => {
+    cat.items.forEach(f => {
+      if (!f.tags) return;
+      const matchCount = f.tags.filter(tag => targetTags.has(tag)).length;
+      if (matchCount > 0) {
+        pluginScores[f.plugin] = (pluginScores[f.plugin] || 0) + matchCount;
+      }
+    });
+  });
+
+  const scored = Object.entries(pluginScores)
+    .filter(([_, score]) => score > 0)
+    .sort((a, b) => b[1] - a[1]);
+
+  const allPlugins = scored.map(([pid]) => pid);
+  const lightCount = Math.min(2, allPlugins.length);
+  const recCount = Math.min(5, allPlugins.length);
+
+  return {
+    light: allPlugins.slice(0, lightCount),
+    recommended: allPlugins.slice(0, recCount),
+    enterprise: allPlugins
+  };
+}
+
+function generatePackages() {
+  generatedPackages = buildPackages();
+  document.getElementById('wizardView').style.display = 'none';
+  document.getElementById('packagesView').style.display = 'block';
+
+  // Auto-select recommended package features
+  selectedFeatures.clear();
+  activePackagePlugins = new Set(generatedPackages.recommended);
+  featureCatalog.forEach(cat => {
+    cat.items.forEach(f => {
+      if (activePackagePlugins.has(f.plugin)) selectedFeatures.add(f.id);
+    });
+  });
+
+  renderPackages();
+  updateSummary();
+}
+
+function renderPackages() {
+  const grid = document.getElementById('packageGrid');
+  if (!grid || !generatedPackages) return;
+  const t = translations[document.documentElement.lang] || translations.en;
+
+  const buildCard = (plugins, title, rec) => {
+    let total = pluginPricing.core.price;
+    plugins.forEach(pid => { total += pluginPricing[pid].price; });
+
+    let pluginHtml = '';
+    plugins.forEach(pid => {
+      const p = pluginPricing[pid];
+      const funcs = [];
+      featureCatalog.forEach(cat => {
+        cat.items.forEach(f => {
+          if (f.plugin === pid) funcs.push(f.name);
+        });
+      });
+      const funcCount = funcs.length;
+      pluginHtml += `
+        <div class="pkg-plugin">
+          <strong>${p.name}</strong>
+          <span>€${p.price}</span>
+        </div>
+        <button class="expand-btn" onclick="this.nextElementSibling.classList.toggle('open'); this.textContent = this.textContent.includes('See') ? 'Hide '+${funcCount}+' functions ▲' : 'See '+${funcCount}+' functions ▼';">See ${funcCount} functions ▼</button>
+        <ul class="function-list">
+          ${funcs.map(fn => `<li>${fn}</li>`).join('')}
+        </ul>`;
+    });
+
+    return `
+      <div class="package-card ${rec?'rec':''}">
+        ${rec?'<div class="rec-badge">Recommended</div>':''}
+        <h4>${title}</h4>
+        <div class="pkg-price">€${total.toLocaleString()}<span> / month</span></div>
+        <div class="pkg-desc">${plugins.length} plugin${plugins.length!==1?'s':''} + Core</div>
+        <div class="pkg-plugins">${pluginHtml}</div>
+        <button class="btn-primary" style="width:100%;" onclick="selectPackage(['${plugins.join("','")}'])">Select This Package</button>
+      </div>`;
+  };
+
+  grid.innerHTML =
+    buildCard(generatedPackages.light, 'Light', false) +
+    buildCard(generatedPackages.recommended, 'Standard', true) +
+    buildCard(generatedPackages.enterprise, 'Enterprise', false);
+}
+
+function selectPackage(plugins) {
+  activePackagePlugins = new Set(plugins);
+  selectedFeatures.clear();
+  featureCatalog.forEach(cat => {
+    cat.items.forEach(f => {
+      if (activePackagePlugins.has(f.plugin)) selectedFeatures.add(f.id);
+    });
+  });
+  updateSummary();
+  if (expertMode) renderConfigurator();
+}
+
+function toggleExpert() {
+  expertMode = !expertMode;
+  const ev = document.getElementById('expertView');
+  ev.style.display = expertMode ? 'block' : 'none';
+  if (expertMode) renderConfigurator();
+}
+
+function renderConfigurator() {
+  const container = document.getElementById('configCategories');
+  if (!container) return;
+  const t = translations[document.documentElement.lang] || translations.en;
+  container.innerHTML = '';
+  featureCatalog.forEach(cat => {
+    const catTitle = t[cat.categoryKey] || translations.en[cat.categoryKey] || cat.categoryKey;
+    const div = document.createElement('div');
+    div.className = 'config-category';
+    let html = `<h3>${catTitle}</h3><div class="feature-list">`;
+    cat.items.forEach(f => {
+      const isSel = selectedFeatures.has(f.id);
+      const priceText = f.priceLabel ? `+€${pluginPricing[f.plugin].price}` : (t.included || 'included');
+      html += `
+        <div class="feature-item ${isSel?'selected':''}" data-id="${f.id}" data-plugin="${f.plugin}" onclick="toggleFeature('${f.id}')">
+          <div class="f-check">&#10003;</div>
+          <div class="f-info">
+            <div class="f-name">${f.name}</div>
+            <div class="f-desc">${f.desc}</div>
+          </div>
+          <div class="f-price">${priceText}</div>
+        </div>`;
+    });
+    html += '</div>';
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+}
+
+function toggleFeature(id) {
+  if (selectedFeatures.has(id)) selectedFeatures.delete(id);
+  else selectedFeatures.add(id);
+  renderConfigurator();
+  updateSummary();
+}
+
+function updateSummary() {
+  const activePlugins = new Set();
+  const featuresArr = [];
+  selectedFeatures.forEach(fid => {
+    featureCatalog.forEach(cat => {
+      const f = cat.items.find(x => x.id === fid);
+      if (f) { activePlugins.add(f.plugin); featuresArr.push(f.name); }
+    });
+  });
+
+  let total = pluginPricing.core.price;
+  activePlugins.forEach(pid => { total += pluginPricing[pid].price; });
+
+  // Render 3D stack (max 7 visible + Core = 8 cards)
+  const stack = document.getElementById('stack3d');
+  let html = `<div class="card-3d"><div class="c3-name">S.A.R.A.H. Core</div><div class="c3-price">€${pluginPricing.core.price}</div></div>`;
+  const pluginsArr = Array.from(activePlugins);
+  const visible = pluginsArr.slice(0, 7);
+  visible.forEach(pid => {
+    const p = pluginPricing[pid];
+    html += `<div class="card-3d"><div class="c3-name">${p.name}</div><div class="c3-price">€${p.price}</div></div>`;
+  });
+  if (pluginsArr.length > 7) {
+    html += `<div class="card-3d more"><div class="c3-name">+${pluginsArr.length - 7} more</div></div>`;
+  }
+  stack.innerHTML = html;
+
+  // Update 3D prism
+  const modCount = 1 + pluginsArr.length;
+  document.getElementById('prismFront').textContent = '€' + total.toLocaleString();
+  document.getElementById('prismRight').textContent = modCount;
+  document.getElementById('prismLeft').textContent = selectedFeatures.size;
+
+  const totalEl = document.getElementById('summaryTotal');
+  totalEl.textContent = '€' + total.toLocaleString();
+
+  document.getElementById('formPlugins').value = Array.from(activePlugins).join(', ');
+  document.getElementById('formPrice').value = total;
+  document.getElementById('formFeatures').value = featuresArr.join(', ');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FORM HANDLER — Replace YOUR_FORM_ID with your Formspree ID
+   ═══════════════════════════════════════════════════════════ */
+const configForm = document.getElementById('configForm');
+if (configForm) {
+  configForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const action = configForm.getAttribute('action');
+    if (action.indexOf('YOUR_FORM_ID') !== -1) {
+      alert('Please replace YOUR_FORM_ID in the HTML with your actual Formspree endpoint.');
+      return;
+    }
+    const formData = new FormData(configForm);
+    fetch(action, { method:'POST', body:formData, headers:{Accept:'application/json'} })
+      .then(r => {
+        if (r.ok) { document.getElementById('modalOverlay').classList.add('open'); configForm.reset(); }
+        else { alert('There was a problem sending your configuration. Please try again.'); }
+      })
+      .catch(() => alert('Network error. Please try again.'));
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INTERSECTION OBSERVER REVEAL
+   ═══════════════════════════════════════════════════════════ */
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+}, { threshold:0.1 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+/* Smooth scroll offset for fixed nav */
 document.querySelectorAll('a[href^="#"]').forEach(function(a) {
   a.addEventListener('click', function(e) {
-    var target = document.querySelector(this.getAttribute('href'));
+    const target = document.querySelector(this.getAttribute('href'));
     if (target) {
       e.preventDefault();
-      var y = target.getBoundingClientRect().top + window.pageYOffset - 80;
+      const y = target.getBoundingClientRect().top + window.pageYOffset - 80;
       window.scrollTo({ top:y, behavior:'smooth' });
     }
   });
 });
-// Scroll-to-hash on load
 window.addEventListener('load', function() {
   if (location.hash) {
-    var target = document.querySelector(location.hash);
+    const target = document.querySelector(location.hash);
     if (target) {
       setTimeout(function() {
-        var y = target.getBoundingClientRect().top + window.pageYOffset - 80;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - 80;
         window.scrollTo({ top:y, behavior:'smooth' });
       }, 100);
     }
   }
+  setLanguage(savedLang);
 });
 </script>
 
