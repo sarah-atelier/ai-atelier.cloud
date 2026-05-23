@@ -559,7 +559,7 @@ p.lead { font-size:1.05rem; color:var(--muted); margin-top:16px; line-height:1.8
         <strong id="summaryTotal">€499</strong>
       </div>
       <p style="font-size:.78rem; color:var(--muted); margin-top:10px; line-height:1.5;" data-i18n="summary_note">Pricing is indicative. Final quote depends on deployment model, hardware profile, and integration complexity.</p>
-      <form id="configForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <form id="configForm" action="https://formspree.io/f/mjgzkjyw" method="POST">
         <input type="hidden" name="selected_plugins" id="formPlugins">
         <input type="hidden" name="estimated_price" id="formPrice">
         <input type="hidden" name="selected_features" id="formFeatures">
@@ -1008,21 +1008,19 @@ function updateSummary() {
 
 /* Form handler */
 const configForm = document.getElementById('configForm');
-configForm.addEventListener('submit', function(e) {
-  e.preventDefault();
-  const action = configForm.getAttribute('action');
-  if (action.indexOf('YOUR_FORM_ID') !== -1) {
-    alert('Please replace YOUR_FORM_ID in the HTML with your actual Formspree endpoint.');
-    return;
-  }
-  const formData = new FormData(configForm);
-  fetch(action, { method:'POST', body:formData, headers:{Accept:'application/json'} })
-    .then(r => {
-      if (r.ok) { document.getElementById('modalOverlay').classList.add('open'); configForm.reset(); selectedFeatures.clear(); renderConfigurator(); updateSummary(); }
-      else { alert('There was a problem sending your configuration. Please try again.'); }
-    })
-    .catch(() => alert('Network error. Please try again.'));
-});
+if (configForm) {
+  configForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const action = configForm.getAttribute('action');
+    const formData = new FormData(configForm);
+    fetch(action, { method:'POST', body:formData, headers:{Accept:'application/json'} })
+      .then(r => {
+        if (r.ok) { document.getElementById('modalOverlay').classList.add('open'); configForm.reset(); selectedFeatures.clear(); renderConfigurator(); updateSummary(); }
+        else { alert('There was a problem sending your configuration. Please try again.'); }
+      })
+      .catch(() => alert('Network error. Please try again.'));
+  });
+}
 
 /* Intersection observer */
 const revealObserver = new IntersectionObserver((entries) => {
